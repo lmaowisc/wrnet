@@ -179,8 +179,8 @@ window.Quarto = {
   <li><a href="#tuning-parameter-selection" id="toc-tuning-parameter-selection" class="nav-link" data-scroll-target="#tuning-parameter-selection">Tuning-parameter selection</a></li>
   <li><a href="#final-model-and-evaluation" id="toc-final-model-and-evaluation" class="nav-link" data-scroll-target="#final-model-and-evaluation">Final model and evaluation</a></li>
   <li><a href="#note" id="toc-note" class="nav-link" data-scroll-target="#note">Note</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -225,7 +225,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="a-step-by-step-guide">A Step-by-Step Guide</h2>
 <section id="installation" class="level3">
 <h3 class="anchored" data-anchor-id="installation">Installation</h3>
-<p>Download and compile the R functions from the <code>wrnet_functions.R</code> script available at <a href="https://github.com/lmaowisc/wrnet" target="_blank">GitHub</a>.</p>
+<p>Download and compile the R functions from the <code>wrnet_functions.R</code> script available at the GitHub <a href="https://github.com/lmaowisc/wrnet" target="_blank">depository</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"wrnet_functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -280,9 +280,9 @@ window.Quarto = {
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="images/gbc_cv.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="578"></p>
+<p><img src="images/gbc_cv.png" class="img-fluid quarto-figure quarto-figure-left figure-img" width="442"></p>
 </figure>
 </div>
 <p>Retrieve the optimal <span class="math inline">\(\lambda\)</span>:</p>
@@ -318,9 +318,9 @@ window.Quarto = {
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">vi_wrnet</span>() <span class="sc">|&gt;</span></span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="images/gbc_vip.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="images/gbc_vip.png" class="img-fluid quarto-figure quarto-figure-left figure-img" width="506"></p>
 </figure>
 </div>
 <p>Evaluate model performance through C-index:</p>
@@ -341,11 +341,11 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="note">Note</h3>
 <p>Both <code>cv_wrnet</code> and <code>wrnet</code> functions accept additional arguments and pass them to the underlying <code>glmnet::glmnet()</code>. For example, setting <code>alpha = 0.5</code> applies an equal mix of lasso and ridge penalties (default: <code>alpha = 1</code> for lasso).</p>
 </section>
-<section id="references" class="level3">
-<h3 class="anchored" data-anchor-id="references">References</h3>
-
-
 </section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+
+
 </section>
 
 </main> <!-- /main -->

@@ -24,7 +24,7 @@ $$ For high-dimensional covariates $z$, the model is regularized using a combina
 
 ### Installation
 
-Download and compile the R functions from the `wrnet_functions.R` script available at [GitHub](https://github.com/lmaowisc/wrnet).
+Download and compile the R functions from the `wrnet_functions.R` script available at the GitHub [depository](https://github.com/lmaowisc/wrnet).
 
 ```{r}
 source("wrnet_functions.R")
@@ -87,9 +87,10 @@ obj_cv |>
    theme_minimal()
 ```
 
-![](images/gbc_cv.png){fig-align="center" width="578"}
+![](images/gbc_cv.png){fig-align="left" width="442"}
 
 Retrieve the optimal $\lambda$:
+
 ```{r}
 # Optimal lambda
 lambda_opt <- obj_cv$lambda[which.max(obj_cv$concordance)]
@@ -125,7 +126,7 @@ final_fit |>
 
 ```
 
-![](images/gbc_vip.png){fig-align="center"}
+![](images/gbc_vip.png){fig-align="left" width="506"}
 
 Evaluate model performance through C-index:
 
@@ -146,4 +147,4 @@ test_result$concordance
 
 Both `cv_wrnet` and `wrnet` functions accept additional arguments and pass them to the underlying `glmnet::glmnet()`. For example, setting `alpha = 0.5` applies an equal mix of lasso and ridge penalties (default: `alpha = 1` for lasso).
 
-### References
+## References

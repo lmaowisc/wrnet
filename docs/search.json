@@ -32,7 +32,7 @@
     "href": "index.html#basics",
     "title": "wrnet: Regularized win ratio regression through elastic net",
     "section": "Basics",
-    "text": "Basics\nWhen comparing two subjects at time \\(t\\), a winner is defined as the subject with either:\n\nLonger overall survival, or\n\nLonger event-free survival, if both survive past \\(t\\).\n\nA basic win ratio model is expressed as: \\[\n\\frac{P(\\text{Subject $i$ wins by time $t$})}{P(\\text{Subject $j$ wins by time $t$})} = \\exp\\{\\beta^{\\rm T}(z_i - z_j)\\}.\n\\] For high-dimensional covariates \\(z\\), the model is regularized using a combination of \\(L_1\\) (lasso) and \\(L_2\\) (ridge regression) penalties on \\(\\beta\\)."
+    "text": "Basics\nWhen comparing two subjects at time \\(t\\), a winner is defined as the subject with either:\n\nLonger overall survival, or\n\nLonger event-free survival, if both survive past \\(t\\).\n\nIn this way, death is prioritized over nonfatal events.\nA basic win ratio model is expressed as: \\[\n\\frac{P(\\text{Subject $i$ wins by time $t$})}{P(\\text{Subject $j$ wins by time $t$})} = \\exp\\{\\beta^{\\rm T}(z_i - z_j)\\}.\n\\] For high-dimensional covariates \\(z\\), the model is regularized using a combination of \\(L_1\\) (lasso) and \\(L_2\\) (ridge regression) penalties on \\(\\beta\\)."
   },
   {
     "objectID": "index.html#a-step-by-step-example",

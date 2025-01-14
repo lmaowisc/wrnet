@@ -216,6 +216,7 @@ window.Quarto = {
 </li>
 <li><strong>Longer event-free survival</strong>, if both survive past <span class="math inline">\(t\)</span>.</li>
 </ol>
+<p>In this way, death is prioritized over nonfatal events.</p>
 <p>A basic win ratio model is expressed as: <span class="math display">\[
 \frac{P(\text{Subject $i$ wins by time $t$})}{P(\text{Subject $j$ wins by time $t$})} = \exp\{\beta^{\rm T}(z_i - z_j)\}.
 \]</span> For high-dimensional covariates <span class="math inline">\(z\)</span>, the model is regularized using a combination of <span class="math inline">\(L_1\)</span> (lasso) and <span class="math inline">\(L_2\)</span> (ridge regression) penalties on <span class="math inline">\(\beta\)</span>.</p>

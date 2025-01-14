@@ -14,6 +14,9 @@ When comparing two subjects at time $t$, a *winner* is defined as the subject wi
 1.  **Longer overall survival**, or\
 2.  **Longer event-free survival**, if both survive past $t$.
 
+In this way, death is prioritized over nonfatal events.
+
+
 A basic win ratio model is expressed as: $$
 \frac{P(\text{Subject $i$ wins by time $t$})}{P(\text{Subject $j$ wins by time $t$})} = \exp\{\beta^{\rm T}(z_i - z_j)\}.
 $$ For high-dimensional covariates $z$, the model is regularized using a combination of $L_1$ (lasso) and $L_2$ (ridge regression) penalties on $\beta$.

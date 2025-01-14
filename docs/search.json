@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "wrnet: Regularized win ratio regression through elastic net",
     "section": "",
-    "text": "WRNet is a machine-learning approach to regularize win ratio regression for hierarchical composite endpoints. It optimizes variable selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios)."
+    "text": "WRNet is a machine-learning approach to regularized win ratio regression for hierarchical composite endpoints. In the presence of many features, it optimizes feature selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios)."
   },
   {
     "objectID": "index.html#win-ratio-basics",
@@ -32,13 +32,13 @@
     "href": "index.html#basics",
     "title": "wrnet: Regularized win ratio regression through elastic net",
     "section": "Basics",
-    "text": "Basics"
+    "text": "Basics\nComparing two subjects at time \\(t\\), a winner is the one that has either\n\nlonger overall survival, or\nlonger event-free survival time if both survive past \\(t\\).\n\nA basic win ratio model is \\[\\begin{equation}\n\\frac{P(\\mbox{Subject $i$ wins by time $t$})}{P(\\mbox{Subject $j$ wins by time $t$})}\n=\\exp\\{\\beta^{\\rm T}(z_i - z_j)\\}.\n\\end{equation}\\]\nIn the case with a high-dimensional \\(z\\), a mixture of penalties on the \\(L_1\\) (lasso) and \\(L_2\\) (ridge regression) norms of \\(\\beta\\) is imposed to regularize the model."
   },
   {
     "objectID": "index.html#a-step-by-step-example",
     "href": "index.html#a-step-by-step-example",
     "title": "wrnet: Regularized win ratio regression through elastic net",
     "section": "A step-by-step example",
-    "text": "A step-by-step example\n\nInstallation\n\n\nData preparation\n\n\nModel tuning by cross-validation\n\n\nFinal model and evaluation"
+    "text": "A step-by-step example\n\nInstallation\nCompile the R functions defined in https://github.com/lmaowisc/wrnet/wrnet_functions.R.\n\nsource(\"wrnet_functions.R\")\n\nTwo packages that are used extensively by these functions are glmnet and tidyverse.\n\nlibrary(glmnet) # for elastic net\nlibrary(tidyverse) # for data manipulation/visualization\n\n\n\nData preparation\nConsider\n\n\nTuning parameter selection\n\n\nFinal model and evaluation"
   }
 ]

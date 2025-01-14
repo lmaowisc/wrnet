@@ -1,21 +1,54 @@
 ---
 title: "wrnet: Regularized win ratio regression through elastic net"
 subtitle: "Variable selection and risk prediction for hierarchical composite outcomes"
+execute:
+  eval: false
 ---
 
-WRNet is a machine-learning approach to regularize win ratio regression
+WRNet is a machine-learning approach to regularized win ratio regression
 for hierarchical composite endpoints. 
-It optimizes variable selection and risk prediction through
+In the presence of many features, 
+it optimizes feature selection and risk prediction through
 an elastic net-type penalty on the regression coefficients (log-win ratios).
 
 ## Basics
 
+Comparing two subjects at time $t$, a winner is the one that has either
+
+1. longer overall survival, or
+2. longer event-free survival time if both survive past $t$.
+
+
+A basic win ratio model is
+\begin{equation}
+\frac{P(\mbox{Subject $i$ wins by time $t$})}{P(\mbox{Subject $j$ wins by time $t$})}
+=\exp\{\beta^{\rm T}(z_i - z_j)\}.
+\end{equation}
+
+In the case with a high-dimensional $z$, a mixture of penalties on the $L_1$ (lasso) and $L_2$ (ridge regression) norms of $\beta$ is imposed to regularize the model.
+
 ## A step-by-step example
+
 
 ### Installation
 
+Compile the R functions defined in [https://github.com/lmaowisc/wrnet/wrnet_functions.R](https://github.com/lmaowisc/wrnet/wrnet_functions.R).
+
+```{r}
+source("wrnet_functions.R")
+```
+
+Two packages that are used extensively by these functions are `glmnet` and `tidyverse`.
+
+```{r}
+library(glmnet) # for elastic net
+library(tidyverse) # for data manipulation/visualization
+```
+
 ### Data preparation
 
-### Model tuning by cross-validation
+Consider 
+
+### Tuning parameter selection
 
 ### Final model and evaluation

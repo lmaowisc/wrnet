@@ -5,27 +5,26 @@ execute:
   eval: false
 ---
 
-WRNet is a machine-learning approach to regularized win ratio regression for hierarchical composite endpoints. In the presence of many features, it optimizes feature selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios).
+**WRNet** is a machine-learning approach for regularized win ratio regression tailored to hierarchical composite endpoints. It optimizes feature selection and risk prediction through an elastic net-type penalty on regression coefficients (log-win ratios), making it suitable for high-dimensional data.
 
 ## Basics
 
-Comparing two subjects at time $t$, a winner is the one that has either
+When comparing two subjects at time $t$, a *winner* is defined as the subject with either:
 
-1.  longer overall survival, or
-2.  longer event-free survival time if both survive past $t$.
+1.  **Longer overall survival**, or\
+2.  **Longer event-free survival**, if both survive past $t$.
 
-A basic win ratio model is \begin{equation}
-\frac{P(\mbox{Subject $i$ wins by time $t$})}{P(\mbox{Subject $j$ wins by time $t$})}
-=\exp\{\beta^{\rm T}(z_i - z_j)\}.
-\end{equation}
+A basic win ratio model is expressed as: $$
+\frac{P(\text{Subject $i$ wins by time $t$})}{P(\text{Subject $j$ wins by time $t$})} = \exp\{\beta^{\rm T}(z_i - z_j)\}.
+$$ For high-dimensional covariates $z$, the model is regularized using a combination of $L_1$ (lasso) and $L_2$ (ridge regression) penalties on $\beta$.
 
-In the case with a high-dimensional $z$, a mixture of penalties on the $L_1$ (lasso) and $L_2$ (ridge regression) norms of $\beta$ is imposed to regularize the model.
+------------------------------------------------------------------------
 
-## A step-by-step guide
+## A Step-by-Step Guide
 
 ### Installation
 
-Download and compile R functions in `wrnet_functions.R` (available at <https://github.com/lmaowisc/wrnet>).
+Download and compile the R functions from the `wrnet_functions.R` script available at [GitHub](https://github.com/lmaowisc/wrnet).
 
 ```{r}
 source("wrnet_functions.R")
@@ -71,7 +70,7 @@ df_test <- obj_split$df_test
 
 ### Tuning-parameter selection
 
-Perform 10-fold (default) cross-validation on training set:
+Perform 10-fold (default) cross-validationon the training set:
 
 ```{r}
 # 10-fold CV -------------------------------------------
@@ -85,11 +84,12 @@ obj_cv |>
    ) +
    geom_point() +
    geom_line() +
-    theme_minimal()
+   theme_minimal()
 ```
 
-![](images/gbc_cv.png){fig-align="center" width="436"}
+![](images/gbc_cv.png){fig-align="center" width="578"}
 
+Retrieve the optimal $\lambda$:
 ```{r}
 # Optimal lambda
 lambda_opt <- obj_cv$lambda[which.max(obj_cv$concordance)]
@@ -127,7 +127,7 @@ final_fit |>
 
 ![](images/gbc_vip.png){fig-align="center"}
 
-Test model performance through C-index:
+Evaluate model performance through C-index:
 
 ```{r}
 # Test model performance -------------------------------
@@ -144,11 +144,6 @@ test_result$concordance
 
 ### Note
 
-Both `cv_wrnet` and `wrnet` functions accept additional arguments and pass them
-to the underlying `glmnet::glmnet()`. For example, use `alpha = 0.5` in both
-to specify a half-lasso and half-ridge penalty, instead of the default `alpha = 1`
-(lasso).
+Both `cv_wrnet` and `wrnet` functions accept additional arguments and pass them to the underlying `glmnet::glmnet()`. For example, setting `alpha = 0.5` applies an equal mix of lasso and ridge penalties (default: `alpha = 1` for lasso).
 
 ### References
-
-

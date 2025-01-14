@@ -172,7 +172,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#basics" id="toc-basics" class="nav-link active" data-scroll-target="#basics">Basics</a></li>
-  <li><a href="#a-step-by-step-guide" id="toc-a-step-by-step-guide" class="nav-link" data-scroll-target="#a-step-by-step-guide">A step-by-step guide</a>
+  <li><a href="#a-step-by-step-guide" id="toc-a-step-by-step-guide" class="nav-link" data-scroll-target="#a-step-by-step-guide">A Step-by-Step Guide</a>
   <ul class="collapse">
   <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data preparation</a></li>
@@ -207,25 +207,25 @@ window.Quarto = {
 </header>
 
 
-<p>WRNet is a machine-learning approach to regularized win ratio regression for hierarchical composite endpoints. In the presence of many features, it optimizes feature selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios).</p>
+<p><strong>WRNet</strong> is a machine-learning approach for regularized win ratio regression tailored to hierarchical composite endpoints. It optimizes feature selection and risk prediction through an elastic net-type penalty on regression coefficients (log-win ratios), making it suitable for high-dimensional data.</p>
 <section id="basics" class="level2">
 <h2 class="anchored" data-anchor-id="basics">Basics</h2>
-<p>Comparing two subjects at time <span class="math inline">\(t\)</span>, a winner is the one that has either</p>
+<p>When comparing two subjects at time <span class="math inline">\(t\)</span>, a <em>winner</em> is defined as the subject with either:</p>
 <ol type="1">
-<li>longer overall survival, or</li>
-<li>longer event-free survival time if both survive past <span class="math inline">\(t\)</span>.</li>
+<li><strong>Longer overall survival</strong>, or<br>
+</li>
+<li><strong>Longer event-free survival</strong>, if both survive past <span class="math inline">\(t\)</span>.</li>
 </ol>
-<p>A basic win ratio model is <span class="math display">\[\begin{equation}
-\frac{P(\mbox{Subject $i$ wins by time $t$})}{P(\mbox{Subject $j$ wins by time $t$})}
-=\exp\{\beta^{\rm T}(z_i - z_j)\}.
-\end{equation}\]</span></p>
-<p>In the case with a high-dimensional <span class="math inline">\(z\)</span>, a mixture of penalties on the <span class="math inline">\(L_1\)</span> (lasso) and <span class="math inline">\(L_2\)</span> (ridge regression) norms of <span class="math inline">\(\beta\)</span> is imposed to regularize the model.</p>
+<p>A basic win ratio model is expressed as: <span class="math display">\[
+\frac{P(\text{Subject $i$ wins by time $t$})}{P(\text{Subject $j$ wins by time $t$})} = \exp\{\beta^{\rm T}(z_i - z_j)\}.
+\]</span> For high-dimensional covariates <span class="math inline">\(z\)</span>, the model is regularized using a combination of <span class="math inline">\(L_1\)</span> (lasso) and <span class="math inline">\(L_2\)</span> (ridge regression) penalties on <span class="math inline">\(\beta\)</span>.</p>
+<hr>
 </section>
 <section id="a-step-by-step-guide" class="level2">
-<h2 class="anchored" data-anchor-id="a-step-by-step-guide">A step-by-step guide</h2>
+<h2 class="anchored" data-anchor-id="a-step-by-step-guide">A Step-by-Step Guide</h2>
 <section id="installation" class="level3">
 <h3 class="anchored" data-anchor-id="installation">Installation</h3>
-<p>Download and compile R functions in <code>wrnet_functions.R</code> (available at <a href="https://github.com/lmaowisc/wrnet" class="uri" target="_blank">https://github.com/lmaowisc/wrnet</a>).</p>
+<p>Download and compile the R functions from the <code>wrnet_functions.R</code> script available at <a href="https://github.com/lmaowisc/wrnet" target="_blank">GitHub</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"wrnet_functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -265,7 +265,7 @@ window.Quarto = {
 </section>
 <section id="tuning-parameter-selection" class="level3">
 <h3 class="anchored" data-anchor-id="tuning-parameter-selection">Tuning-parameter selection</h3>
-<p>Perform 10-fold (default) cross-validation on training set:</p>
+<p>Perform 10-fold (default) cross-validationon the training set:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 10-fold CV -------------------------------------------</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
@@ -278,13 +278,14 @@ window.Quarto = {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/gbc_cv.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="436"></p>
+<p><img src="images/gbc_cv.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="578"></p>
 </figure>
 </div>
+<p>Retrieve the optimal <span class="math inline">\(\lambda\)</span>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimal lambda</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>lambda_opt <span class="ot">&lt;-</span> obj_cv<span class="sc">$</span>lambda[<span class="fu">which.max</span>(obj_cv<span class="sc">$</span>concordance)]</span>
@@ -322,7 +323,7 @@ window.Quarto = {
 <p><img src="images/gbc_vip.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>Test model performance through C-index:</p>
+<p>Evaluate model performance through C-index:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test model performance -------------------------------</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>test_result <span class="ot">&lt;-</span> final_fit <span class="sc">|&gt;</span> <span class="fu">test_wrnet</span>(df_test)</span>
@@ -338,7 +339,7 @@ window.Quarto = {
 </section>
 <section id="note" class="level3">
 <h3 class="anchored" data-anchor-id="note">Note</h3>
-<p>Both <code>cv_wrnet</code> and <code>wrnet</code> functions accept additional arguments and pass them to the underlying <code>glmnet::glmnet()</code>. For example, use <code>alpha = 0.5</code> in both to specify a half-lasso and half-ridge penalty, instead of the default <code>alpha = 1</code> (lasso).</p>
+<p>Both <code>cv_wrnet</code> and <code>wrnet</code> functions accept additional arguments and pass them to the underlying <code>glmnet::glmnet()</code>. For example, setting <code>alpha = 0.5</code> applies an equal mix of lasso and ridge penalties (default: <code>alpha = 1</code> for lasso).</p>
 </section>
 <section id="references" class="level3">
 <h3 class="anchored" data-anchor-id="references">References</h3>

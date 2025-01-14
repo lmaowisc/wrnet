@@ -1,0 +1,5 @@
+---
+title: "wrnet: Regularized win ratio regression through elastic net"
+subtitle: "Variable selection and risk prediction for hierarchical composite outcomes"
+---
+

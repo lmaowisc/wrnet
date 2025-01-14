@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "wrnet"
+  title: "WRNet"
   navbar:
     background: "#0479A8"
     left:

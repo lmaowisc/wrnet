@@ -5,5 +5,40 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "wrnet: Regularized win ratio regression through elastic net",
+    "section": "",
+    "text": "WRNet is a machine-learning approach to regularize win ratio regression for hierarchical composite endpoints. It optimizes variable selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios)."
+  },
+  {
+    "objectID": "index.html#win-ratio-basics",
+    "href": "index.html#win-ratio-basics",
+    "title": "wrnet: Regularized win ratio regression through elastic net",
+    "section": "Win ratio basics",
+    "text": "Win ratio basics"
+  },
+  {
+    "objectID": "index.html#regularized-win-ratio-regression",
+    "href": "index.html#regularized-win-ratio-regression",
+    "title": "wrnet: Regularized win ratio regression through elastic net",
+    "section": "Regularized win ratio regression",
+    "text": "Regularized win ratio regression"
+  },
+  {
+    "objectID": "index.html#basics",
+    "href": "index.html#basics",
+    "title": "wrnet: Regularized win ratio regression through elastic net",
+    "section": "Basics",
+    "text": "Basics"
+  },
+  {
+    "objectID": "index.html#a-step-by-step-example",
+    "href": "index.html#a-step-by-step-example",
+    "title": "wrnet: Regularized win ratio regression through elastic net",
+    "section": "A step-by-step example",
+    "text": "A step-by-step example\n\nInstallation\n\n\nData preparation\n\n\nModel tuning by cross-validation\n\n\nFinal model and evaluation"
   }
 ]

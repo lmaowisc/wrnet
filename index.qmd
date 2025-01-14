@@ -3,3 +3,19 @@ title: "wrnet: Regularized win ratio regression through elastic net"
 subtitle: "Variable selection and risk prediction for hierarchical composite outcomes"
 ---
 
+WRNet is a machine-learning approach to regularize win ratio regression
+for hierarchical composite endpoints. 
+It optimizes variable selection and risk prediction through
+an elastic net-type penalty on the regression coefficients (log-win ratios).
+
+## Basics
+
+## A step-by-step example
+
+### Installation
+
+### Data preparation
+
+### Model tuning by cross-validation
+
+### Final model and evaluation

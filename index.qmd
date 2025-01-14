@@ -5,40 +5,33 @@ execute:
   eval: false
 ---
 
-WRNet is a machine-learning approach to regularized win ratio regression
-for hierarchical composite endpoints. 
-In the presence of many features, 
-it optimizes feature selection and risk prediction through
-an elastic net-type penalty on the regression coefficients (log-win ratios).
+WRNet is a machine-learning approach to regularized win ratio regression for hierarchical composite endpoints. In the presence of many features, it optimizes feature selection and risk prediction through an elastic net-type penalty on the regression coefficients (log-win ratios).
 
 ## Basics
 
 Comparing two subjects at time $t$, a winner is the one that has either
 
-1. longer overall survival, or
-2. longer event-free survival time if both survive past $t$.
+1.  longer overall survival, or
+2.  longer event-free survival time if both survive past $t$.
 
-
-A basic win ratio model is
-\begin{equation}
+A basic win ratio model is \begin{equation}
 \frac{P(\mbox{Subject $i$ wins by time $t$})}{P(\mbox{Subject $j$ wins by time $t$})}
 =\exp\{\beta^{\rm T}(z_i - z_j)\}.
 \end{equation}
 
 In the case with a high-dimensional $z$, a mixture of penalties on the $L_1$ (lasso) and $L_2$ (ridge regression) norms of $\beta$ is imposed to regularize the model.
 
-## A step-by-step example
-
+## A step-by-step guide
 
 ### Installation
 
-Compile the R functions defined in [https://github.com/lmaowisc/wrnet/wrnet_functions.R](https://github.com/lmaowisc/wrnet/wrnet_functions.R).
+Download and compile R functions in `wrnet_functions.R` (available at <https://github.com/lmaowisc/wrnet>).
 
 ```{r}
 source("wrnet_functions.R")
 ```
 
-Two packages that are used extensively by these functions are `glmnet` and `tidyverse`.
+Two packages used extensively in these functions are `glmnet` and `tidyverse`.
 
 ```{r}
 library(glmnet) # for elastic net
@@ -47,8 +40,115 @@ library(tidyverse) # for data manipulation/visualization
 
 ### Data preparation
 
-Consider 
+Consider a German breast cancer study with 686 subjects and 9 covariates.
 
-### Tuning parameter selection
+```{r}
+# Load package containing data
+library(WR)
+# Load data
+data("gbc") 
+df <- gbc # n = 686 subjects, p = 9 covariates
+df # status = 0 (censored), 1 (death), 2 (recurrence)
+#>   id      time status hormone age menopause size grade ...
+#>1   1 43.836066      2       1  38         1   18     3  
+#>2   1 74.819672      0       1  38         1   18     3  
+#>3   2 46.557377      2       1  52         1   20     1   
+#>4   2 65.770492      0       1  52         1   20     1  
+#>5   3 41.934426      2       1  47         1   30     2   
+#>...
+```
+
+Split data into training versus test set:
+
+```{r}
+# Data partitioning ------------------------------------
+set.seed(123)
+obj_split <- df |> wr_split() # default: 80% training, 20% test
+# Take training and test set
+df_train <- obj_split$df_train
+df_test <- obj_split$df_test
+```
+
+### Tuning-parameter selection
+
+Perform 10-fold (default) cross-validation on training set:
+
+```{r}
+# 10-fold CV -------------------------------------------
+set.seed(1234)
+obj_cv <- cv_wrnet(df_train$id, df_train$time, df_train$status, 
+                    df_train |> select(-c(id, time, status)))
+# Plot CV results (C-index vs log-lambda)
+obj_cv |> 
+   ggplot(
+    aes(x =  log(lambda), y = concordance)
+   ) +
+   geom_point() +
+   geom_line() +
+    theme_minimal()
+```
+
+![](images/gbc_cv.png){fig-align="center" width="436"}
+
+```{r}
+# Optimal lambda
+lambda_opt <- obj_cv$lambda[which.max(obj_cv$concordance)]
+lambda_opt
+#> [1] 0.0171976
+```
 
 ### Final model and evaluation
+
+Finalize model at optimal tuning parameter $\lambda_{\rm opt}$:
+
+```{r}
+# Final model ------------------------------------------
+final_fit <- wrnet(df_train$id, df_train$time, df_train$status, 
+              df_train |> select(-c(id, time, status)), 
+              lambda = lambda_opt)
+# Estimated coefficients
+final_fit$beta
+#> 8 x 1 sparse Matrix of class "dgCMatrix"
+#>                      s0
+#> hormone     0.306026364
+#> age         0.003111462
+#> menopause   .          
+#> size       -0.007720497
+#> grade      -0.285511701
+#> nodes      -0.082227827
+#> prog_recp   0.001861367
+#> estrg_recp  .     
+# Variable importance plot
+final_fit |> 
+   vi_wrnet() |>
+   vip()
+
+```
+
+![](images/gbc_vip.png){fig-align="center"}
+
+Test model performance through C-index:
+
+```{r}
+# Test model performance -------------------------------
+test_result <- final_fit |> test_wrnet(df_test)
+# Overall and event-specific C-indices
+test_result$concordance
+#> # A tibble: 3 × 2
+#>   component concordance
+#>   <chr>           <dbl>
+#> 1 death           0.724
+#> 2 nonfatal        0.607
+#> 3 overall         0.664
+```
+
+### Note
+
+Both `cv_wrnet` and `wrnet` functions accept additional arguments and pass them
+to the underlying `glmnet::glmnet()`. For example, use `alpha = 0.5` in both
+to specify a half-lasso and half-ridge penalty, instead of the default `alpha = 1`
+(lasso).
+
+### References
+
+

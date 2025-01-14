@@ -467,11 +467,17 @@ vi_wrnet <- function(fit){
       importance > 0
     )
 
-  class(obj) <- "vi_wrnet"
+  class(obj) <- c("vi_wrnet", class(obj))
 
   obj
 }
 
+
+
+# Define the generic
+vip <- function(x, ...) {
+  UseMethod("vip")
+}
 # Plot top k variables based on variable importance
 # Arguments:
 # - x: Variable importance object (vi_wrnet)

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Lu Mao">
 
-<title>wrnet: Regularized win ratio regression through elastic net – WRNet</title>
+<title>WRNet: Regularized win ratio regression through elastic net – WRNet</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -189,7 +210,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">wrnet: Regularized win ratio regression through elastic net</h1>
+<h1 class="title">WRNet: Regularized win ratio regression through elastic net</h1>
 <p class="subtitle lead">Variable selection and risk prediction for hierarchical composite outcomes</p>
 </div>
 
@@ -197,6 +218,12 @@ window.Quarto = {
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lu Mao </p>
+          </div>
+  </div>
     
   
     
@@ -340,16 +367,30 @@ window.Quarto = {
 </section>
 <section id="note" class="level3">
 <h3 class="anchored" data-anchor-id="note">Note</h3>
-<p>Both <code>cv_wrnet</code> and <code>wrnet</code> functions accept additional arguments and pass them to the underlying <code>glmnet::glmnet()</code>. For example, setting <code>alpha = 0.5</code> applies an equal mix of lasso and ridge penalties (default: <code>alpha = 1</code> for lasso).</p>
+<p>Both <code>cv_wrnet()</code> and <code>wrnet()</code> functions accept additional arguments and pass them to the underlying <code>glmnet::glmnet()</code>. For example, setting <code>alpha = 0.5</code> applies an equal mix of lasso and ridge penalties (default: <code>alpha = 1</code> for lasso).</p>
 </section>
 </section>
 <section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-friedman:2010" class="csl-entry" role="listitem">
+Friedman, Jerome, Trevor Hastie, and Rob Tibshirani. 2010. <span>“Regularization Paths for Generalized Linear Models via Coordinate Descent.”</span> <em>Journal of Statistical Software</em> 33 (1): 1–20.
+</div>
+<div id="ref-mao2021" class="csl-entry" role="listitem">
+Mao, Lu, and Tuo Wang. 2021. <span>“A Class of Proportional Win-Fractions Regression Models for Composite Outcomes.”</span> <em>Biometrics</em> 77 (4): 1265–75.
+</div>
+<div id="ref-pocock2012" class="csl-entry" role="listitem">
+Pocock, SJ, CA Ariti, TJ Collier, and D Wang. 2012. <span>“The Win Ratio: A New Approach to the Analysis of Composite Endpoints in Clinical Trials Based on Clinical Priorities.”</span> <em>European Heart Journal</em> 33 (2): 176–12.
+</div>
+<div id="ref-zou:2005" class="csl-entry" role="listitem">
+Zou, Hui, and Trevor Hastie. 2005. <span>“Regularization and Variable Selection via the Elastic Net.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 67 (2): 301–20.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

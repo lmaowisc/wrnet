@@ -1,7 +1,7 @@
 ---
 title: "WRNet: Regularized win ratio regression through elastic net"
 subtitle: "Variable selection and risk prediction for hierarchical composite outcomes"
-author: Lu Mao
+date: today
 execute:
   eval: false
 bibliography: regul_wr.bib

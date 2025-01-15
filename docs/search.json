@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "workflow.html",
+    "href": "workflow.html",
+    "title": "Main steps in data analysis",
+    "section": "",
+    "text": "Key functionalities include wrnet() for pathwise solution of \\(\\beta\\) as a function of \\(\\lambda\\), cv_wrnet() for \\(k\\)-fold cross-validation, and test_wrnet() for evaluation of test performance. Additionally, there are helper functions to calculate or visualize C-indices, variable importance, and more.\n\nData preparation\n\nInitial data frame df in long format with id, time, status columns: subject identifiers, event times, and event status (1 for death; 2 for nonfatal event; 0 for censoring), along with covariate columns.\nPartition into training and test sets by a specified proportion:\n\n      wr_split(df, prop = 0.8)\n\n\nReturns a list of training data df_train and test data df_test;\nDefault split stratified by outcome status.\n\n\n\n\nCross-validation\n\nPerform \\(k\\)-fold cross-validation on df_train:\n\n       cv_wrnet(id, time, status, Z, k = 10, ...) \n\n\nReturns a tibble with columns lambda and concordance;\nIdentify optimal lambda_opt maximizing concordance;\nAdditional arguments, such as \\(\\alpha\\in[0, 1]\\) (default is 1), passed to glmnet::glmnet() for pairwise logistic regression on each fold.\n\n\n\n\nFit final model\n\nFinal fit on df_train under optimal lambda_opt:\n\n    final_fit &lt;- wrnet(id, time, status, Z, lambda = lambda_opt, ...)\n\n\n\\(\\widehat\\beta(\\lambda_{\\rm opt})\\): final_fit$beta;\nVariable importance: vi_wrnet(final_fit);\nAdditional arguments passed to glmnet::glmnet().\n\n\n\n\nTest performance\n\nCalculate overall and component-wise C-indices on df_test:\n\n      test_wrnet(final_fit, df_test)"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
@@ -14,20 +21,6 @@
     "text": "WRNet is a machine-learning approach for regularized win ratio regression tailored to hierarchical composite endpoints. It optimizes feature selection and risk prediction through an elastic net-type penalty on regression coefficients (log-win ratios), making it suitable for high-dimensional data."
   },
   {
-    "objectID": "index.html#win-ratio-basics",
-    "href": "index.html#win-ratio-basics",
-    "title": "wrnet: Regularized win ratio regression through elastic net",
-    "section": "Win ratio basics",
-    "text": "Win ratio basics"
-  },
-  {
-    "objectID": "index.html#regularized-win-ratio-regression",
-    "href": "index.html#regularized-win-ratio-regression",
-    "title": "wrnet: Regularized win ratio regression through elastic net",
-    "section": "Regularized win ratio regression",
-    "text": "Regularized win ratio regression"
-  },
-  {
     "objectID": "index.html#basics",
     "href": "index.html#basics",
     "title": "WRNet: Regularized win ratio regression through elastic net",
@@ -35,38 +28,10 @@
     "text": "Basics\nWhen comparing two subjects \\(i\\) vs \\(j\\) at time \\(t\\), a winner is defined as the subject with either:\n\nLonger overall survival, or\n\nLonger event-free survival, if both survive past \\(t\\).\n\nIn this way, death is prioritized over nonfatal events.\nA basic win ratio model is expressed as: \\[\n\\frac{P(\\text{Subject $i$ wins by time $t$})}{P(\\text{Subject $j$ wins by time $t$})} = \\exp\\{\\beta^{\\rm T}(z_i - z_j)\\}.\n\\] For high-dimensional covariates \\(z\\), the model is regularized using a combination of \\(L_1\\) (lasso) and \\(L_2\\) (ridge regression) penalties on \\(\\beta\\)."
   },
   {
-    "objectID": "index.html#a-step-by-step-example",
-    "href": "index.html#a-step-by-step-example",
-    "title": "wrnet: Regularized win ratio regression through elastic net",
-    "section": "A step-by-step example",
-    "text": "A step-by-step example\n\nInstallation\nCompile the R functions defined in https://github.com/lmaowisc/wrnet/wrnet_functions.R.\n\nsource(\"wrnet_functions.R\")\n\nTwo packages that are used extensively by these functions are glmnet and tidyverse.\n\nlibrary(glmnet) # for elastic net\nlibrary(tidyverse) # for data manipulation/visualization\n\n\n\nData preparation\nConsider\n\n\nTuning parameter selection\n\n\nFinal model and evaluation"
-  },
-  {
     "objectID": "index.html#a-step-by-step-guide",
     "href": "index.html#a-step-by-step-guide",
     "title": "WRNet: Regularized win ratio regression through elastic net",
     "section": "A Step-by-Step Guide",
     "text": "A Step-by-Step Guide\n\nInstallation\nDownload and compile the R functions from the wrnet_functions.R script available at the GitHub depository.\n\nsource(\"wrnet_functions.R\")\n\nTwo packages used extensively in these functions are glmnet and tidyverse.\n\nlibrary(glmnet) # for elastic net\nlibrary(tidyverse) # for data manipulation/visualization\n\n\n\nData preparation\nConsider a German breast cancer study with 686 subjects and 9 covariates.\n\n# Load package containing data\nlibrary(WR)\n# Load data\ndata(\"gbc\") \ndf &lt;- gbc # n = 686 subjects, p = 9 covariates\ndf # status = 0 (censored), 1 (death), 2 (recurrence)\n#&gt;   id      time status hormone age menopause size grade ...\n#&gt;1   1 43.836066      2       1  38         1   18     3  \n#&gt;2   1 74.819672      0       1  38         1   18     3  \n#&gt;3   2 46.557377      2       1  52         1   20     1   \n#&gt;4   2 65.770492      0       1  52         1   20     1  \n#&gt;5   3 41.934426      2       1  47         1   30     2   \n#&gt;...\n\nSplit data into training versus test set:\n\n# Data partitioning ------------------------------------\nset.seed(123)\nobj_split &lt;- df |&gt; wr_split() # default: 80% training, 20% test\n# Take training and test set\ndf_train &lt;- obj_split$df_train\ndf_test &lt;- obj_split$df_test\n\n\n\nTuning-parameter selection\nPerform 10-fold (default) cross-validationon the training set:\n\n# 10-fold CV -------------------------------------------\nset.seed(1234)\nobj_cv &lt;- cv_wrnet(df_train$id, df_train$time, df_train$status, \n                    df_train |&gt; select(-c(id, time, status)))\n# Plot CV results (C-index vs log-lambda)\nobj_cv |&gt; \n   ggplot(\n    aes(x =  log(lambda), y = concordance)\n   ) +\n   geom_point() +\n   geom_line() +\n   theme_minimal()\n\n\n\n\n\n\nRetrieve the optimal \\(\\lambda\\):\n\n# Optimal lambda\nlambda_opt &lt;- obj_cv$lambda[which.max(obj_cv$concordance)]\nlambda_opt\n#&gt; [1] 0.0171976\n\n\n\nFinal model and evaluation\nFinalize model at optimal tuning parameter \\(\\lambda_{\\rm opt}\\):\n\n# Final model ------------------------------------------\nfinal_fit &lt;- wrnet(df_train$id, df_train$time, df_train$status, \n              df_train |&gt; select(-c(id, time, status)), \n              lambda = lambda_opt)\n# Estimated coefficients\nfinal_fit$beta\n#&gt; 8 x 1 sparse Matrix of class \"dgCMatrix\"\n#&gt;                      s0\n#&gt; hormone     0.306026364\n#&gt; age         0.003111462\n#&gt; menopause   .          \n#&gt; size       -0.007720497\n#&gt; grade      -0.285511701\n#&gt; nodes      -0.082227827\n#&gt; prog_recp   0.001861367\n#&gt; estrg_recp  .     \n# Variable importance plot\nfinal_fit |&gt; \n   vi_wrnet() |&gt;\n   vip()\n\n\n\n\n\n\nEvaluate model performance through C-index:\n\n# Test model performance -------------------------------\ntest_result &lt;- final_fit |&gt; test_wrnet(df_test)\n# Overall and event-specific C-indices\ntest_result$concordance\n#&gt; # A tibble: 3 × 2\n#&gt;   component concordance\n#&gt;   &lt;chr&gt;           &lt;dbl&gt;\n#&gt; 1 death           0.724\n#&gt; 2 nonfatal        0.607\n#&gt; 3 overall         0.664\n\n\n\nNote\nBoth cv_wrnet() and wrnet() functions accept additional arguments and pass them to the underlying glmnet::glmnet(). For example, setting alpha = 0.5 applies an equal mix of lasso and ridge penalties (default: alpha = 1 for lasso)."
-  },
-  {
-    "objectID": "index.html#references",
-    "href": "index.html#references",
-    "title": "WRNet: Regularized win ratio regression through elastic net",
-    "section": "References",
-    "text": "References"
-  },
-  {
-    "objectID": "workflow.html",
-    "href": "workflow.html",
-    "title": "Main steps in data analysis",
-    "section": "",
-    "text": "Key functionalities include wrnet() for pathwise solution of \\(\\beta\\) as a function of \\(\\lambda\\), cv_wrnet() for \\(K\\)-fold cross-validation, and test_wrnet() for evaluation of test performance. Additionally, there are helper functions to calculate or visualize C-indices, variable importance, and more."
-  },
-  {
-    "objectID": "workflow.html#data-preparation",
-    "href": "workflow.html#data-preparation",
-    "title": "Main steps in data analysis",
-    "section": "Data preparation",
-    "text": "Data preparation\nLoad the lung data set from the survival package:"
   }
 ]

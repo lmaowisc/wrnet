@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -67,6 +101,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -107,8 +170,17 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link active" data-scroll-target="#data-preparation">Data preparation</a></li>
+  <li><a href="#cross-validation" id="toc-cross-validation" class="nav-link" data-scroll-target="#cross-validation">Cross-validation</a></li>
+  <li><a href="#fit-final-model" id="toc-fit-final-model" class="nav-link" data-scroll-target="#fit-final-model">Fit final model</a></li>
+  <li><a href="#test-performance" id="toc-test-performance" class="nav-link" data-scroll-target="#test-performance">Test performance</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -133,8 +205,60 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Key functionalities include <code>wrnet()</code> for pathwise solution of <span class="math inline">\(\beta\)</span> as a function of <span class="math inline">\(\lambda\)</span>, <code>cv_wrnet()</code> for <span class="math inline">\(k\)</span>-fold cross-validation, and <code>test_wrnet()</code> for evaluation of test performance. Additionally, there are helper functions to calculate or visualize C-indices, variable importance, and more.</p>
+<section id="data-preparation" class="level3">
+<h3 class="anchored" data-anchor-id="data-preparation">Data preparation</h3>
+<ul>
+<li><p>Initial data frame <code>df</code> in long format with <code>id</code>, <code>time</code>, <code>status</code> columns: subject identifiers, event times, and event status (1 for death; 2 for nonfatal event; 0 for censoring), along with covariate columns.</p></li>
+<li><p>Partition into training and test sets by a specified proportion:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>      <span class="fu">wr_split</span>(df, <span class="at">prop =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Returns a list of training data <code>df_train</code> and test data <code>df_test</code>;</li>
+<li>Default split stratified by outcome status.</li>
+</ul></li>
+</ul>
+</section>
+<section id="cross-validation" class="level3">
+<h3 class="anchored" data-anchor-id="cross-validation">Cross-validation</h3>
+<ul>
+<li><p>Perform <span class="math inline">\(k\)</span>-fold cross-validation on <code>df_train</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>       <span class="fu">cv_wrnet</span>(id, time, status, Z, <span class="at">k =</span> <span class="dv">10</span>, ...) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Returns a tibble with columns <code>lambda</code> and <code>concordance</code>;</li>
+<li>Identify optimal <code>lambda_opt</code> maximizing <code>concordance</code>;</li>
+<li>Additional arguments, such as <span class="math inline">\(\alpha\in[0, 1]\)</span> (default is 1), passed to <code>glmnet::glmnet()</code> for pairwise logistic regression on each fold.</li>
+</ul></li>
+</ul>
+</section>
+<section id="fit-final-model" class="level3">
+<h3 class="anchored" data-anchor-id="fit-final-model">Fit final model</h3>
+<ul>
+<li><p>Final fit on <code>df_train</code> under optimal <code>lambda_opt</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    final_fit <span class="ot">&lt;-</span> <span class="fu">wrnet</span>(id, time, status, Z, <span class="at">lambda =</span> lambda_opt, ...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><span class="math inline">\(\widehat\beta(\lambda_{\rm opt})\)</span>: <code>final_fit$beta</code>;</li>
+<li>Variable importance: <code>vi_wrnet(final_fit)</code>;</li>
+<li>Additional arguments passed to <code>glmnet::glmnet()</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="test-performance" class="level3">
+<h3 class="anchored" data-anchor-id="test-performance">Test performance</h3>
+<ul>
+<li><p>Calculate overall and component-wise C-indices on <code>df_test</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>      <span class="fu">test_wrnet</span>(final_fit, df_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

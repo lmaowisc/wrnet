@@ -5,13 +5,46 @@ execute:
   eval: false
 ---
 
-Key functionalities include `wrnet()` for pathwise
-solution of $\beta$ as a function of $\lambda$, `cv_wrnet()` for $K$-fold
-cross-validation, and `test_wrnet()` for
-evaluation of test performance.
-Additionally, there are 
-helper functions to calculate or visualize C-indices, variable importance, and more.
+Key functionalities include `wrnet()` for pathwise solution of $\beta$ as a function of $\lambda$, `cv_wrnet()` for $k$-fold cross-validation, and `test_wrnet()` for evaluation of test performance. Additionally, there are helper functions to calculate or visualize C-indices, variable importance, and more.
 
-## Data preparation
+### Data preparation
 
-Load the `lung` data set from the `survival` package:
+-   Initial data frame `df` in long format with `id`, `time`, `status` columns: subject identifiers, event times, and event status (1 for death; 2 for nonfatal event; 0 for censoring), along with covariate columns.
+
+-   Partition into training and test sets by a specified proportion:
+    ```{r}
+          wr_split(df, prop = 0.8)
+    ```
+    -   Returns a list of training data `df_train` and test data `df_test`;
+    -   Default split stratified by outcome status.
+    
+### Cross-validation
+
+-   Perform $k$-fold cross-validation on `df_train`:
+    ```{r}
+           cv_wrnet(id, time, status, Z, k = 10, ...) 
+    ```
+    -   Returns a tibble with columns `lambda` and `concordance`;
+    -   Identify optimal `lambda_opt` maximizing `concordance`;
+    -   Additional arguments, such as $\alpha\in[0, 1]$ (default is 1), passed to `glmnet::glmnet()` for pairwise logistic regression on each fold.
+    
+    
+### Fit final model    
+    
+-   Final fit on `df_train` under optimal `lambda_opt`:
+    ```{r}
+        final_fit <- wrnet(id, time, status, Z, lambda = lambda_opt, ...)
+    ```
+    -   $\widehat\beta(\lambda_{\rm opt})$: `final_fit$beta`;
+    -   Variable importance:  `vi_wrnet(final_fit)`;
+    -   Additional arguments passed to `glmnet::glmnet()`.
+
+### Test performance
+
+-   Calculate overall and component-wise C-indices on `df_test`:
+    ```{r}
+          test_wrnet(final_fit, df_test)
+    ```
+
+
+  

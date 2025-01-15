@@ -31,7 +31,7 @@ $$ For high-dimensional covariates $z$, the model is regularized using a combina
 
 ### Installation
 
-Download and compile the R functions from the `wrnet_functions.R` script available at the GitHub [depository](https://github.com/lmaowisc/wrnet).
+Download and compile the R functions from the `wrnet_functions.R` script available at the  [GitHub repository](https://github.com/lmaowisc/wrnet).
 
 ```{r}
 source("wrnet_functions.R")

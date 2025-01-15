@@ -45,6 +45,7 @@ Key functionalities include `wrnet()` for pathwise solution of $\beta$ as a func
     ```{r}
           test_wrnet(final_fit, df_test)
     ```
-
+    -   Returns an object with element `concordance`, a tibble
+    containing the calculated metrics.
 
   

@@ -13,7 +13,7 @@ nocite: |
 
 ## Basics
 
-When comparing two subjects at time $t$, a *winner* is defined as the subject with either:
+When comparing two subjects $i$ vs $j$ at time $t$, a *winner* is defined as the subject with either:
 
 1.  **Longer overall survival**, or\
 2.  **Longer event-free survival**, if both survive past $t$.

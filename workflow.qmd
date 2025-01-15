@@ -1,0 +1,17 @@
+---
+title: "Main steps in data analysis"
+subtitle: "A simple workflow"
+execute:
+  eval: false
+---
+
+Key functionalities include `wrnet()` for pathwise
+solution of $\beta$ as a function of $\lambda$, `cv_wrnet()` for $K$-fold
+cross-validation, and `test_wrnet()` for
+evaluation of test performance.
+Additionally, there are 
+helper functions to calculate or visualize C-indices, variable importance, and more.
+
+## Data preparation
+
+Load the `lung` data set from the `survival` package:

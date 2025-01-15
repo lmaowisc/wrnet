@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-01-14">
+<meta name="dcterms.date" content="2025-01-15">
 
 <title>WRNet: Regularized win ratio regression through elastic net – WRNet</title>
 <style>
@@ -176,6 +176,10 @@ window.Quarto = {
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Introduction</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./workflow.html"> 
+<span class="menu-text">Workflow</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -222,7 +226,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 14, 2025</p>
+      <p class="date">January 15, 2025</p>
     </div>
   </div>
   
@@ -237,7 +241,7 @@ window.Quarto = {
 <p><strong>WRNet</strong> is a machine-learning approach for regularized win ratio regression tailored to hierarchical composite endpoints. It optimizes feature selection and risk prediction through an elastic net-type penalty on regression coefficients (log-win ratios), making it suitable for high-dimensional data.</p>
 <section id="basics" class="level2">
 <h2 class="anchored" data-anchor-id="basics">Basics</h2>
-<p>When comparing two subjects at time <span class="math inline">\(t\)</span>, a <em>winner</em> is defined as the subject with either:</p>
+<p>When comparing two subjects <span class="math inline">\(i\)</span> vs <span class="math inline">\(j\)</span> at time <span class="math inline">\(t\)</span>, a <em>winner</em> is defined as the subject with either:</p>
 <ol type="1">
 <li><strong>Longer overall survival</strong>, or<br>
 </li>

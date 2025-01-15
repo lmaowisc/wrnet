@@ -9,6 +9,8 @@ website:
     left:
       - href: index.qmd
         text: Introduction
+      - href: workflow.qmd
+        text: Workflow
 
 format:
   html:

@@ -1,0 +1,191 @@
+---
+title: "Regularized win ratio regression"
+subtitle: "Variable selection and risk prediction with composite outcomes"
+# css: wr_style.css
+# csl: apa.csl
+author:
+  name: Lu Mao
+  affiliations: 
+    - name: Department of Biostatistics & Medical Informatics
+    - University of Wisconsin-Madison
+    - Draft: April 2025
+format: 
+  revealjs:
+    theme: serif
+    auto-stretch: false
+editor: visual
+include-in-header:
+  - text: |
+      <style type="text/css">
+      ul li ul li {
+        font-size: 0.80em;
+      }
+      </style>
+bibliography: regul_wr.bib
+title-slide-attributes: 
+  data-background-image: jsm_logo1.png
+  data-background-size: 18%
+  data-background-position: 50% 2%
+---
+
+## Outline
+
+-   **Motivation and background**
+-   **Standard PW model**
+-   **Regularized model and implementation**
+-   **Simulations**
+-   **HF-ACTION application**
+-   **Summary and discussion**
+
+# Motivation and background
+
+## Hierarchical composite endpoints
+
+-   Win ratio (WR): emphasizes **clinical priority**
+    -   Death \> hospitalization \> other events
+    -   Proposed by @pocock2012
+-   Composite endpoint: relative proportion of pairwise wins
+
+## Limitations of current models
+
+-   Standard WR regression (PW model) limited to low-dimensional settings
+-   Regularized Cox model — not ideal for **hierarchical** outcomes
+-   Need: scalable, interpretable method aligned with WR
+
+## Our contribution
+
+-   Elastic net regularization for PW model
+-   Subject-level CV with generalized concordance index
+-   Software: [`wrnet`](https://lmaowisc.github.io/wrnet/)
+
+# The proportional win-fractions (PW) model
+
+## Review of standard model
+
+-   For subjects $i, j$, define pairwise **win indicator** $\mathcal{W}(Y_i, Y_j)(t)$
+-   PW model [@mao2021]:
+
+$$
+\frac{\pr\{\mathcal{W}(Y_i, Y_j)(t) = 1 \mid z_i, z_j\}}{\pr\{\mathcal{W}(Y_j, Y_i)(t) = 1 \mid z_j, z_i\}} = \exp\left\{\beta^\top(z_i - z_j)\right\}
+$$
+
+-   $\beta$: log-win ratios (interpretability similar to Cox)
+
+## Estimation
+
+-   Solve $U$-estimating equation:
+
+$$
+U_n(\beta) = |\mathcal R|^{-1} \sum_{(i,j)\in\mathcal R} z_{ij}\left\{\delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})}\right\}
+$$
+
+-   Numerically equivalent to logistic regression score function (no intercept)
+
+# Regularized PW model
+
+## Objective function
+
+-   Use elastic net penalty [@zou2005]:
+
+$$
+l_n(\beta;\lambda) = \text{logistic loss} + \lambda\left\{(1-\alpha)||\beta||_2^2/2 + \alpha||\beta||_1\right\}
+$$
+
+-   Computed efficiently using `glmnet()` with custom design matrix
+
+## Key implementation points
+
+-   **No intercept** due to symmetry
+-   **Pairwise comparisons**: not independent
+-   Subject-based cross-validation essential
+
+## Subject-level cross-validation
+
+-   Partition subjects into folds $\mathcal{S}^{(k)}$
+-   Train on $\mathcal{S}^{(-k)}$, validate on $\mathcal{S}^{(k)}$
+
+## Generalized concordance index
+
+-   Win score = $\beta^\top z_i$ for subject $i$
+-   Concordance = proportion of correctly ranked comparable pairs:
+
+$$
+\mathcal{C} = |\mathcal R|^{-1} \sum_{(i,j)\in\mathcal R} I\left\{(2\delta_{ij} - 1)(\beta^\top z_i - \beta^\top z_j) > 0\right\}
+$$
+
+# Simulations
+
+## Setup
+
+-   $p=20$ covariates with AR(1) correlation
+-   Two outcome components: death and hospitalization
+-   Two scenarios:
+    -   Scenario 1: same predictors for both components
+    -   Scenario 2: distinct predictors for death and nonfatal
+
+## Performance: Sensitivity and Specificity
+
+-   Compare variable selection accuracy between WR and Cox
+-   WR consistently better in identifying true features
+-   Especially better in **Scenario 2** when component effects differ
+
+## Predictive accuracy (C-index)
+
+![](figs/fig_cind.png){fig-align="center" width="55%"}
+
+-   In Scenario 2, WR has better prognostic performance for death and overall
+
+# HF-ACTION application
+
+## Dataset and setup
+
+-   Subset: $n=426$ high-risk patients (CPX duration $\leq 9$ min)
+-   Outcomes: death \> hospitalization
+-   $p=153$ baseline features
+-   Train-test split: 80%/20%
+
+## Cross-validation comparison
+
+![](figs/fig_cv_errors.png){fig-align="center" width="80%"}
+
+-   Naive CV on pairs leads to overfitting
+-   Subject-level CV identifies optimal $\lambda$ properly
+
+## Test performance
+
+![](fig_preds.eps){fig-align="center" width="90%"}
+
+-   WR model better stratifies high-risk patients
+-   Outperforms Cox in predicting deaths
+
+## Variable importance
+
+![](fig_vip.eps){fig-align="center" width="90%"}
+
+-   WR model selects 20 interpretable variables
+-   Top predictors include sex, valve surgery, CPX metrics
+
+# Summary and discussion
+
+## Summary
+
+-   Developed elastic net-regularized WR regression
+-   Better aligns with clinical priorities than Cox
+-   Accurate feature selection and prediction
+
+## Tools
+
+-   R package [`wrnet`](https://lmaowisc.github.io/wrnet/)
+-   Efficient implementation with `glmnet()` backend
+-   Supports CV, test evaluation, and variable importance
+
+## Future directions
+
+-   Explore $\alpha \in (0,1)$ settings
+-   Extend to time-varying effects and nonlinearities
+-   Combine with restricted estimands for precision
+
+# References
+
+::: {#refs}
+:::

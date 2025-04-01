@@ -33,5 +33,145 @@
     "title": "WRNet: Regularized win ratio regression through elastic net",
     "section": "A Step-by-Step Guide",
     "text": "A Step-by-Step Guide\n\nInstallation\nDownload and compile the R functions from the wrnet_functions.R script available at the GitHub repository.\n\nsource(\"wrnet_functions.R\")\n\nTwo packages used extensively in these functions are glmnet and tidyverse.\n\nlibrary(glmnet) # for elastic net\nlibrary(tidyverse) # for data manipulation/visualization\n\n\n\nData preparation\nConsider a German breast cancer study with 686 subjects and 9 covariates.\n\n# Load package containing data\nlibrary(WR)\n# Load data\ndata(\"gbc\") \ndf &lt;- gbc # n = 686 subjects, p = 9 covariates\ndf # status = 0 (censored), 1 (death), 2 (recurrence)\n#&gt;   id      time status hormone age menopause size grade ...\n#&gt;1   1 43.836066      2       1  38         1   18     3  \n#&gt;2   1 74.819672      0       1  38         1   18     3  \n#&gt;3   2 46.557377      2       1  52         1   20     1   \n#&gt;4   2 65.770492      0       1  52         1   20     1  \n#&gt;5   3 41.934426      2       1  47         1   30     2   \n#&gt;...\n\nSplit data into training versus test set:\n\n# Data partitioning ------------------------------------\nset.seed(123)\nobj_split &lt;- df |&gt; wr_split() # default: 80% training, 20% test\n# Take training and test set\ndf_train &lt;- obj_split$df_train\ndf_test &lt;- obj_split$df_test\n\n\n\nTuning-parameter selection\nPerform 10-fold (default) cross-validationon the training set:\n\n# 10-fold CV -------------------------------------------\nset.seed(1234)\nobj_cv &lt;- cv_wrnet(df_train$id, df_train$time, df_train$status, \n                    df_train |&gt; select(-c(id, time, status)))\n# Plot CV results (C-index vs log-lambda)\nobj_cv |&gt; \n   ggplot(\n    aes(x =  log(lambda), y = concordance)\n   ) +\n   geom_point() +\n   geom_line() +\n   theme_minimal()\n\n\n\n\n\n\nRetrieve the optimal \\(\\lambda\\):\n\n# Optimal lambda\nlambda_opt &lt;- obj_cv$lambda[which.max(obj_cv$concordance)]\nlambda_opt\n#&gt; [1] 0.0171976\n\n\n\nFinal model and evaluation\nFinalize model at optimal tuning parameter \\(\\lambda_{\\rm opt}\\):\n\n# Final model ------------------------------------------\nfinal_fit &lt;- wrnet(df_train$id, df_train$time, df_train$status, \n              df_train |&gt; select(-c(id, time, status)), \n              lambda = lambda_opt)\n# Estimated coefficients\nfinal_fit$beta\n#&gt; 8 x 1 sparse Matrix of class \"dgCMatrix\"\n#&gt;                      s0\n#&gt; hormone     0.306026364\n#&gt; age         0.003111462\n#&gt; menopause   .          \n#&gt; size       -0.007720497\n#&gt; grade      -0.285511701\n#&gt; nodes      -0.082227827\n#&gt; prog_recp   0.001861367\n#&gt; estrg_recp  .     \n# Variable importance plot\nfinal_fit |&gt; \n   vi_wrnet() |&gt;\n   vip()\n\n\n\n\n\n\nEvaluate model performance through C-index:\n\n# Test model performance -------------------------------\ntest_result &lt;- final_fit |&gt; test_wrnet(df_test)\n# Overall and event-specific C-indices\ntest_result$concordance\n#&gt; # A tibble: 3 × 2\n#&gt;   component concordance\n#&gt;   &lt;chr&gt;           &lt;dbl&gt;\n#&gt; 1 death           0.724\n#&gt; 2 nonfatal        0.607\n#&gt; 3 overall         0.664\n\n\n\nNote\nBoth cv_wrnet() and wrnet() functions accept additional arguments and pass them to the underlying glmnet::glmnet(). For example, setting alpha = 0.5 applies an equal mix of lasso and ridge penalties (default: alpha = 1 for lasso)."
+  },
+  {
+    "objectID": "presentation.html#outline",
+    "href": "presentation.html#outline",
+    "title": "Regularized win ratio regression",
+    "section": "Outline",
+    "text": "Outline\n\nMotivation and background\nStandard PW model\nRegularized model and implementation\nSimulations\nHF-ACTION application\nSummary and discussion"
+  },
+  {
+    "objectID": "presentation.html#hierarchical-composite-endpoints",
+    "href": "presentation.html#hierarchical-composite-endpoints",
+    "title": "Regularized win ratio regression",
+    "section": "Hierarchical composite endpoints",
+    "text": "Hierarchical composite endpoints\n\nWin ratio (WR): emphasizes clinical priority\n\nDeath &gt; hospitalization &gt; other events\nProposed by Pocock et al. (2012)\n\nComposite endpoint: relative proportion of pairwise wins"
+  },
+  {
+    "objectID": "presentation.html#limitations-of-current-models",
+    "href": "presentation.html#limitations-of-current-models",
+    "title": "Regularized win ratio regression",
+    "section": "Limitations of current models",
+    "text": "Limitations of current models\n\nStandard WR regression (PW model) limited to low-dimensional settings\nRegularized Cox model — not ideal for hierarchical outcomes\nNeed: scalable, interpretable method aligned with WR"
+  },
+  {
+    "objectID": "presentation.html#our-contribution",
+    "href": "presentation.html#our-contribution",
+    "title": "Regularized win ratio regression",
+    "section": "Our contribution",
+    "text": "Our contribution\n\nElastic net regularization for PW model\nSubject-level CV with generalized concordance index\nSoftware: wrnet"
+  },
+  {
+    "objectID": "presentation.html#review-of-standard-model",
+    "href": "presentation.html#review-of-standard-model",
+    "title": "Regularized win ratio regression",
+    "section": "Review of standard model",
+    "text": "Review of standard model\n\nFor subjects \\(i, j\\), define pairwise win indicator \\(\\mathcal{W}(Y_i, Y_j)(t)\\)\nPW model (Mao and Wang 2021):\n\n\\[\n\\frac{\\pr\\{\\mathcal{W}(Y_i, Y_j)(t) = 1 \\mid z_i, z_j\\}}{\\pr\\{\\mathcal{W}(Y_j, Y_i)(t) = 1 \\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\top(z_i - z_j)\\right\\}\n\\]\n\n\\(\\beta\\): log-win ratios (interpretability similar to Cox)"
+  },
+  {
+    "objectID": "presentation.html#estimation",
+    "href": "presentation.html#estimation",
+    "title": "Regularized win ratio regression",
+    "section": "Estimation",
+    "text": "Estimation\n\nSolve \\(U\\)-estimating equation:\n\n\\[\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i,j)\\in\\mathcal R} z_{ij}\\left\\{\\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})}\\right\\}\n\\]\n\nNumerically equivalent to logistic regression score function (no intercept)"
+  },
+  {
+    "objectID": "presentation.html#objective-function",
+    "href": "presentation.html#objective-function",
+    "title": "Regularized win ratio regression",
+    "section": "Objective function",
+    "text": "Objective function\n\nUse elastic net penalty (zou2005?):\n\n\\[\nl_n(\\beta;\\lambda) = \\text{logistic loss} + \\lambda\\left\\{(1-\\alpha)||\\beta||_2^2/2 + \\alpha||\\beta||_1\\right\\}\n\\]\n\nComputed efficiently using glmnet() with custom design matrix"
+  },
+  {
+    "objectID": "presentation.html#key-implementation-points",
+    "href": "presentation.html#key-implementation-points",
+    "title": "Regularized win ratio regression",
+    "section": "Key implementation points",
+    "text": "Key implementation points\n\nNo intercept due to symmetry\nPairwise comparisons: not independent\nSubject-based cross-validation essential"
+  },
+  {
+    "objectID": "presentation.html#subject-level-cross-validation",
+    "href": "presentation.html#subject-level-cross-validation",
+    "title": "Regularized win ratio regression",
+    "section": "Subject-level cross-validation",
+    "text": "Subject-level cross-validation\n\nPartition subjects into folds \\(\\mathcal{S}^{(k)}\\)\nTrain on \\(\\mathcal{S}^{(-k)}\\), validate on \\(\\mathcal{S}^{(k)}\\)"
+  },
+  {
+    "objectID": "presentation.html#generalized-concordance-index",
+    "href": "presentation.html#generalized-concordance-index",
+    "title": "Regularized win ratio regression",
+    "section": "Generalized concordance index",
+    "text": "Generalized concordance index\n\nWin score = \\(\\beta^\\top z_i\\) for subject \\(i\\)\nConcordance = proportion of correctly ranked comparable pairs:\n\n\\[\n\\mathcal{C} = |\\mathcal R|^{-1} \\sum_{(i,j)\\in\\mathcal R} I\\left\\{(2\\delta_{ij} - 1)(\\beta^\\top z_i - \\beta^\\top z_j) &gt; 0\\right\\}\n\\]"
+  },
+  {
+    "objectID": "presentation.html#setup",
+    "href": "presentation.html#setup",
+    "title": "Regularized win ratio regression",
+    "section": "Setup",
+    "text": "Setup\n\n\\(p=20\\) covariates with AR(1) correlation\nTwo outcome components: death and hospitalization\nTwo scenarios:\n\nScenario 1: same predictors for both components\nScenario 2: distinct predictors for death and nonfatal"
+  },
+  {
+    "objectID": "presentation.html#performance-sensitivity-and-specificity",
+    "href": "presentation.html#performance-sensitivity-and-specificity",
+    "title": "Regularized win ratio regression",
+    "section": "Performance: Sensitivity and Specificity",
+    "text": "Performance: Sensitivity and Specificity\n\nCompare variable selection accuracy between WR and Cox\nWR consistently better in identifying true features\nEspecially better in Scenario 2 when component effects differ"
+  },
+  {
+    "objectID": "presentation.html#predictive-accuracy-c-index",
+    "href": "presentation.html#predictive-accuracy-c-index",
+    "title": "Regularized win ratio regression",
+    "section": "Predictive accuracy (C-index)",
+    "text": "Predictive accuracy (C-index)\n\n\n\n\n\n\nIn Scenario 2, WR has better prognostic performance for death and overall"
+  },
+  {
+    "objectID": "presentation.html#dataset-and-setup",
+    "href": "presentation.html#dataset-and-setup",
+    "title": "Regularized win ratio regression",
+    "section": "Dataset and setup",
+    "text": "Dataset and setup\n\nSubset: \\(n=426\\) high-risk patients (CPX duration \\(\\leq 9\\) min)\nOutcomes: death &gt; hospitalization\n\\(p=153\\) baseline features\nTrain-test split: 80%/20%"
+  },
+  {
+    "objectID": "presentation.html#cross-validation-comparison",
+    "href": "presentation.html#cross-validation-comparison",
+    "title": "Regularized win ratio regression",
+    "section": "Cross-validation comparison",
+    "text": "Cross-validation comparison\n\n\n\n\n\n\nNaive CV on pairs leads to overfitting\nSubject-level CV identifies optimal \\(\\lambda\\) properly"
+  },
+  {
+    "objectID": "presentation.html#test-performance",
+    "href": "presentation.html#test-performance",
+    "title": "Regularized win ratio regression",
+    "section": "Test performance",
+    "text": "Test performance\n\n\n\n\n\n\nWR model better stratifies high-risk patients\nOutperforms Cox in predicting deaths"
+  },
+  {
+    "objectID": "presentation.html#variable-importance",
+    "href": "presentation.html#variable-importance",
+    "title": "Regularized win ratio regression",
+    "section": "Variable importance",
+    "text": "Variable importance\n\n\n\n\n\n\nWR model selects 20 interpretable variables\nTop predictors include sex, valve surgery, CPX metrics"
+  },
+  {
+    "objectID": "presentation.html#summary",
+    "href": "presentation.html#summary",
+    "title": "Regularized win ratio regression",
+    "section": "Summary",
+    "text": "Summary\n\nDeveloped elastic net-regularized WR regression\nBetter aligns with clinical priorities than Cox\nAccurate feature selection and prediction"
+  },
+  {
+    "objectID": "presentation.html#tools",
+    "href": "presentation.html#tools",
+    "title": "Regularized win ratio regression",
+    "section": "Tools",
+    "text": "Tools\n\nR package wrnet\nEfficient implementation with glmnet() backend\nSupports CV, test evaluation, and variable importance"
+  },
+  {
+    "objectID": "presentation.html#future-directions",
+    "href": "presentation.html#future-directions",
+    "title": "Regularized win ratio regression",
+    "section": "Future directions",
+    "text": "Future directions\n\nExplore \\(\\alpha \\in (0,1)\\) settings\nExtend to time-varying effects and nonlinearities\nCombine with restricted estimands for precision"
   }
 ]

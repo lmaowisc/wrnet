@@ -186,7 +186,7 @@
     "href": "presentation.html#win-ratio-regression",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Win Ratio Regression",
-    "text": "Win Ratio Regression\n\n\nSemiparametric regression \\[\\begin{equation}\\label{eq:pw}\n\\frac{\\pr\\{\\W(\\bs Y_i, \\bs Y_j)(t) = 1\\mid z_i, z_j\\}}{\\pr\\{\\W(\\bs Y_j, \\bs Y_i)(t) = 1\\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\T(z_i - z_j)\\right\\}\n\\end{equation}\\]\n\n\\(z\\): \\(p\\)-dimensional covariates\nProportional win-fractions (PW) model\n\nEquivalent to Cox PH model in univariate case (Oakes, 2016)—WR = 1/HR\n\n\\(\\exp(\\beta)\\): win ratios associated with unit increases in \\(z\\)\n\n\n\n\n\nLimitation\n\nLow-dimensional setting (\\(p&lt;&lt; n\\))"
+    "text": "Win Ratio Regression\n\n\nSemiparametric regression \\[\\begin{equation}\\label{eq:pw}\n\\frac{\\pr\\{\\W(\\bs Y_i, \\bs Y_j)(t) = 1\\mid z_i, z_j\\}}{\\pr\\{\\W(\\bs Y_j, \\bs Y_i)(t) = 1\\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\T(z_i - z_j)\\right\\}\n\\end{equation}\\]\n\n\\(z\\): \\(p\\)-dimensional covariates\nProportional win-fractions (PW) model\n\nEquivalent to Cox PH model in univariate case (Oakes, 2016)—WR = 1/HR\n\n\\(\\exp(\\beta)\\): win ratios associated with unit increases in \\(z\\)\n\n\n\n\n\nLimitation: \\(p&lt;&lt; n\\)"
   },
   {
     "objectID": "presentation.html#goals",
@@ -214,7 +214,7 @@
     "href": "presentation.html#standard-model-fitting",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Standard Model-Fitting",
-    "text": "Standard Model-Fitting\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) + \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) &gt; 0\\}\\): set of comparable pairs"
+    "text": "Standard Model-Fitting\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\delta_{ij} + \\delta_{ji} &gt; 0\\}\\): set of comparable pairs"
   },
   {
     "objectID": "presentation.html#regularized-pw-model",

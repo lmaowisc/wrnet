@@ -349,10 +349,7 @@ Lu Mao
 </div>
 <div class="fragment">
 <ul>
-<li><strong>Limitation</strong>
-<ul>
-<li>Low-dimensional setting (<span class="math inline">\(p&lt;&lt; n\)</span>) <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. --></li>
-</ul></li>
+<li><strong>Limitation</strong>: <span class="math inline">\(p&lt;&lt; n\)</span> <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. --></li>
 </ul>
 </div>
 </section>
@@ -407,7 +404,7 @@ z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top 
 <li><span class="math inline">\(z_{ij} = z_i - z_j\)</span>: covariate difference<br>
 </li>
 <li><span class="math inline">\(\delta_{ij} = \mathcal{W}(\bs Y_i, \bs Y_j)(X_i \wedge X_j)\)</span>: observed win indicator</li>
-<li><span class="math inline">\(\mathcal{R}=\{(i, j): \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) + \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) &gt; 0\}\)</span>: set of <em>comparable</em> pairs</li>
+<li><span class="math inline">\(\mathcal{R}=\{(i, j): \delta_{ij} + \delta_{ji} &gt; 0\}\)</span>: set of <em>comparable</em> pairs</li>
 </ul></li>
 </ul>
 </div>

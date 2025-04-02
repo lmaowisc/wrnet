@@ -116,8 +116,7 @@ $$
     -   $\exp(\beta)$: win ratios associated with unit increases in $z$
 :::
 :::{.fragment}
--   **Limitation**
-    -   Low-dimensional setting ($p<< n$)
+-   **Limitation**: $p<< n$
         <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. -->
 :::
 
@@ -155,7 +154,7 @@ z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top 
 \end{equation}
     -   $z_{ij} = z_i - z_j$: covariate difference  
     -   $\delta_{ij} = \mathcal{W}(\bs Y_i, \bs Y_j)(X_i \wedge X_j)$: observed win indicator
-    -   $\mathcal{R}=\{(i, j): \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) + \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) > 0\}$: set of *comparable* pairs
+    -   $\mathcal{R}=\{(i, j): \delta_{ij} + \delta_{ji} > 0\}$: set of *comparable* pairs
 :::
 
 

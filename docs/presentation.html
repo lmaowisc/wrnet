@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.6.39">
 
   <meta name="author" content="Lu Mao">
-  <title>WRNet – Regularized win ratio regression</title>
+  <title>WRNet – WRNet: Regularized win ratio regression</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -28,6 +28,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     /* CSS for citations */
     div.csl-bib-body { }
     div.csl-entry {
@@ -49,7 +114,8 @@
     div.csl-indent {
       margin-left: 2em;
     }  </style>
-  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-a527665ed01beaa5bc5d6c6d96bbc18d.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-bbe7401fe57d4b791b917637bb662036.css">
+  <link rel="stylesheet" href="wr_style.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -152,8 +218,8 @@
     <div class="slides">
 
 <section id="title-slide" data-background-image="jsm_logo1.png" data-background-position="50% 2%" data-background-size="18%" class="quarto-title-block center">
-  <h1 class="title">Regularized win ratio regression</h1>
-  <p class="subtitle">Variable selection and risk prediction with composite outcomes</p>
+  <h1 class="title"><code>WRNet</code>: Regularized win ratio regression</h1>
+  <p class="subtitle">Variable selection and risk prediction with hierarchical composite outcomes</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -173,120 +239,451 @@ Lu Mao
 </div>
 
 </section>
+<section class="slide level2">
+
+<p><span class="math display">\[
+\newcommand{\wh}{\widehat}
+\newcommand{\wt}{\widetilde}
+\def\bs{\boldsymbol}
+\newcommand{\red}{}
+\newcommand{\indep}{\perp \!\!\! \perp}
+\def\T{{ \mathrm{\scriptscriptstyle T} }}
+\def\pr{{\rm pr}}
+\def\d{{\rm d}}
+\def\W{{\mathcal W}}
+\def\H{{\mathcal H}}
+\def\I{{\mathcal I}}
+\def\C{{\mathcal C}}
+\def\S{{\mathcal S}}
+\def\Sk{{\mathcal S}^{(k)}}
+\def\Skm{{\mathcal S}^{(-k)}}
+\def\v{\varepsilon}
+\def\bSig\mathbf{\Sigma}
+\def\Un{\sum_{i=1}^{n-1}\sum_{j=i+1}^n}
+\]</span></p>
+</section>
 <section id="outline" class="slide level2">
 <h2>Outline</h2>
 <ul>
-<li><strong>Motivation and background</strong></li>
-<li><strong>Standard PW model</strong></li>
-<li><strong>Regularized model and implementation</strong></li>
-<li><strong>Simulations</strong></li>
+<li><strong>Introduction</strong></li>
+<li><strong>Methods</strong>
+<ul>
+<li>Standard win ratio regression</li>
+<li>Regularization and computation</li>
+<li><a href="https://lmaowisc.github.io/wrnet/"><code>WRNet</code></a> workflow</li>
+</ul></li>
+<li><strong>Simulation studies</strong></li>
 <li><strong>HF-ACTION application</strong></li>
-<li><strong>Summary and discussion</strong></li>
 </ul>
 </section>
 <section>
-<section id="motivation-and-background" class="title-slide slide level1 center">
-<h1>Motivation and background</h1>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
 
 </section>
 <section id="hierarchical-composite-endpoints" class="slide level2">
-<h2>Hierarchical composite endpoints</h2>
+<h2>Hierarchical Composite Endpoints</h2>
+<div class="fragment">
 <ul>
-<li>Win ratio (WR): emphasizes <strong>clinical priority</strong>
+<li><strong>Composite outcomes</strong>
 <ul>
-<li>Death &gt; hospitalization &gt; other events</li>
-<li>Proposed by <span class="citation" data-cites="pocock2012">Pocock et al. (<a href="#/references" role="doc-biblioref" onclick="">2012</a>)</span></li>
+<li><strong>Components</strong>: Death, hospitalization, other events</li>
+<li><strong>Standard approach</strong>: Time to first event (e.g., Cox model)</li>
 </ul></li>
-<li>Composite endpoint: relative proportion of pairwise wins</li>
 </ul>
-</section>
-<section id="limitations-of-current-models" class="slide level2">
-<h2>Limitations of current models</h2>
+</div>
+<div class="fragment">
 <ul>
-<li>Standard WR regression (PW model) limited to low-dimensional settings</li>
-<li>Regularized Cox model — not ideal for <strong>hierarchical</strong> outcomes</li>
-<li>Need: scalable, interpretable method aligned with WR</li>
-</ul>
-</section>
-<section id="our-contribution" class="slide level2">
-<h2>Our contribution</h2>
+<li><strong>Win ratio (WR)</strong> <span class="citation" data-cites="pocock2012">(<a href="#/references" role="doc-biblioref" onclick="">Pocock et al., 2012</a>)</span>
 <ul>
-<li>Elastic net regularization for PW model</li>
-<li>Subject-level CV with generalized concordance index</li>
-<li>Software: <a href="https://lmaowisc.github.io/wrnet/"><code>wrnet</code></a></li>
+<li><strong>Pairwise comparisons</strong>: Treatment vs control <span class="citation" data-cites="buyse:2010">(<a href="#/references" role="doc-biblioref" onclick="">Buyse, 2010</a>)</span></li>
+<li><strong>Each pair</strong>: Death &gt; hospitalization (&gt; other events)</li>
+<li><strong>Effect size</strong> <span class="math display">\[
+\text{WR} = \frac{\text{Number of wins}}{\text{Number of losses}}
+\]</span></li>
+</ul></li>
 </ul>
+</div>
+</section>
+<section id="data-and-notation" class="slide level2">
+<h2>Data and Notation</h2>
+<div class="fragment">
+<ul>
+<li><strong>Outcomes data</strong> (subject <span class="math inline">\(i\)</span>)
+<ul>
+<li><span class="math inline">\(D_i\)</span>: time to death</li>
+<li><span class="math inline">\(T_i\)</span>: time to first nonfatal event</li>
+<li><span class="math inline">\(\bs Y_i(t) =(D_i\wedge t, T_i\wedge t)\)</span>: cumulative data at <span class="math inline">\(t\)</span>
+<ul>
+<li><span class="math inline">\(x\wedge y = \min(x, y)\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Win indicator</strong> <span class="math display">\[\begin{align*}\label{eq:win2tier}
+\W(\bs Y_i, \bs Y_j)(t) = \underbrace{I(D_j&lt; D_i\wedge t)}_{\mbox{Win on survival}}
++ \underbrace{I(D_i\wedge D_j &gt;t,\; T_j&lt; T_i\wedge t)}_
+{\mbox{Tie on survival, win on nonfatal event}}
+\end{align*}\]</span></li>
+</ul>
+</div>
+</section>
+<section id="win-ratio-regression" class="slide level2">
+<h2>Win Ratio Regression</h2>
+<div class="fragment">
+<ul>
+<li><strong>Semiparametric regression</strong> <span class="math display">\[\begin{equation}\label{eq:pw}
+\frac{\pr\{\W(\bs Y_i, \bs Y_j)(t) = 1\mid z_i, z_j\}}{\pr\{\W(\bs Y_j, \bs Y_i)(t) = 1\mid z_j, z_i\}} = \exp\left\{\beta^\T(z_i - z_j)\right\}
+\end{equation}\]</span>
+<ul>
+<li><span class="math inline">\(z\)</span>: <span class="math inline">\(p\)</span>-dimensional covariates</li>
+<li><strong>Proportional win-fractions (PW) model</strong>
+<ul>
+<li>Equivalent to Cox PH model in univariate case <span class="citation" data-cites="oakes:2016">(<a href="#/references" role="doc-biblioref" onclick="">Oakes, 2016</a>)</span>—WR = 1/HR</li>
+</ul></li>
+<li><span class="math inline">\(\exp(\beta)\)</span>: win ratios associated with unit increases in <span class="math inline">\(z\)</span></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Limitation</strong>
+<ul>
+<li>Low-dimensional setting (<span class="math inline">\(p&lt;&lt; n\)</span>) <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. --></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="goals" class="slide level2">
+<h2>Goals</h2>
+<div class="fragment">
+<ul>
+<li><strong>Objectives</strong>:
+<ul>
+<li>Automate variable selection in WR regression<br>
+</li>
+<li>Enhance prediction accuracy and model parsimony</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Approach</strong>:
+<ul>
+<li>Apply <strong>elastic net</strong> regularization to PW model
+<ul>
+<li>Mixture of <span class="math inline">\(L_1\)</span> (lasso) and <span class="math inline">\(L_2\)</span> (ridge) penalties<br>
+</li>
+</ul></li>
+<li>Implemented in <a href="https://lmaowisc.github.io/wrnet/"><code>wrnet</code></a> R package</li>
+</ul></li>
+</ul>
+</div>
 </section></section>
 <section>
-<section id="the-proportional-win-fractions-pw-model" class="title-slide slide level1 center">
-<h1>The proportional win-fractions (PW) model</h1>
+<section id="methods" class="title-slide slide level1 center">
+<h1>Methods</h1>
 
 </section>
-<section id="review-of-standard-model" class="slide level2">
-<h2>Review of standard model</h2>
+<section id="standard-model-fitting" class="slide level2">
+<h2>Standard Model-Fitting</h2>
+<div class="fragment">
 <ul>
-<li>For subjects <span class="math inline">\(i, j\)</span>, define pairwise <strong>win indicator</strong> <span class="math inline">\(\mathcal{W}(Y_i, Y_j)(t)\)</span></li>
-<li>PW model <span class="citation" data-cites="mao2021">(<a href="#/references" role="doc-biblioref" onclick="">Mao and Wang 2021</a>)</span>:</li>
-</ul>
-<p><span class="math display">\[
-\frac{\pr\{\mathcal{W}(Y_i, Y_j)(t) = 1 \mid z_i, z_j\}}{\pr\{\mathcal{W}(Y_j, Y_i)(t) = 1 \mid z_j, z_i\}} = \exp\left\{\beta^\top(z_i - z_j)\right\}
-\]</span></p>
+<li><strong>Observed data</strong>
 <ul>
-<li><span class="math inline">\(\beta\)</span>: log-win ratios (interpretability similar to Cox)</li>
+<li><span class="math inline">\(\bs Y_i(X_i)\)</span>: outcomes data up to <span class="math inline">\(X_i = D_i \wedge C_i\)</span> (<span class="math inline">\(C_i\)</span>: censoring time)</li>
+</ul></li>
 </ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Estimating equation</strong> <span class="citation" data-cites="mao2021">(<a href="#/references" role="doc-biblioref" onclick="">Mao &amp; Wang, 2021</a>)</span> <span class="math display">\[\begin{equation}
+U_n(\beta) = |\mathcal R|^{-1} \sum_{(i, j)\in \mathcal R}
+z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})} \right\}
+\end{equation}\]</span>
+<ul>
+<li><span class="math inline">\(z_{ij} = z_i - z_j\)</span>: covariate difference<br>
+</li>
+<li><span class="math inline">\(\delta_{ij} = \mathcal{W}(\bs Y_i, \bs Y_j)(X_i \wedge X_j)\)</span>: observed win indicator</li>
+<li><span class="math inline">\(\mathcal{R}=\{(i, j): \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) + \mathcal{W}(\bs Y_j, \bs Y_i)(X_i \wedge X_j) &gt; 0\}\)</span>: set of <em>comparable</em> pairs</li>
+</ul></li>
+</ul>
+</div>
 </section>
 <section id="estimation" class="slide level2">
 <h2>Estimation</h2>
+<div class="fragment">
 <ul>
-<li>Solve <span class="math inline">\(U\)</span>-estimating equation:</li>
-</ul>
-<p><span class="math display">\[
-U_n(\beta) = |\mathcal R|^{-1} \sum_{(i,j)\in\mathcal R} z_{ij}\left\{\delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})}\right\}
-\]</span></p>
+<li><strong>Estimator</strong>: solving <span class="math display">\[
+U_n(\hat\beta) \;\;= 0
+\]</span>
 <ul>
-<li>Numerically equivalent to logistic regression score function (no intercept)</li>
+<li>Standard Newton–Raphson algorithm</li>
+</ul></li>
 </ul>
-</section></section>
-<section>
-<section id="regularized-pw-model" class="title-slide slide level1 center">
-<h1>Regularized PW model</h1>
-
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Connection with logistic regression</strong>
+<ul>
+<li><span class="math inline">\(U_n(\hat\beta)\)</span> equivalent to logistic score function (no intercept)</li>
+<li>Each comparable <span class="math inline">\((i, j)\)</span> pair as an <em>observation</em>
+<ul>
+<li><span class="math inline">\(\delta_{ij}\)</span>: binary response</li>
+<li><span class="math inline">\(z_{ij}\)</span>: covariates</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 </section>
-<section id="objective-function" class="slide level2">
-<h2>Objective function</h2>
+<section id="regularized-pw-model" class="slide level2">
+<h2>Regularized PW model</h2>
 <ul>
-<li>Use elastic net penalty <span class="citation" data-cites="zou2005">(<a href="#/references" role="doc-biblioref" onclick=""><strong>zou2005?</strong></a>)</span>:</li>
-</ul>
-<p><span class="math display">\[
-l_n(\beta;\lambda) = \text{logistic loss} + \lambda\left\{(1-\alpha)||\beta||_2^2/2 + \alpha||\beta||_1\right\}
-\]</span></p>
+<li><strong>Objective function</strong> <span class="citation" data-cites="zou:2005">(<a href="#/references" role="doc-biblioref" onclick="">Zou &amp; Hastie, 2005</a>)</span>: <span class="math display">\[\begin{align}\label{eq:obj_fun}
+l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_{ij}\beta^\T z_{ij} - \log\{1+\exp(\beta^\T z_{ij})\}\right]\notag\\
+&amp;\hspace{3em}+\lambda\left\{(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1\right\}
+\end{align}\]</span>
 <ul>
-<li>Computed efficiently using <code>glmnet()</code> with custom design matrix</li>
+<li><strong>Pathwise solution</strong> <span class="math inline">\(\hat\beta(\lambda) = \arg\min_\beta l_n(\beta;\lambda)\)</span>
+<ul>
+<li>Numerically equivalent to regularized logistic regression</li>
+</ul></li>
+<li>Tuning parameter <span class="math inline">\(\lambda\geq 0\)</span>—determined by cross-validation (CV)
+<ul>
+<li><span class="math inline">\(\partial l_n(\beta; 0)/\partial\beta = U_n(\beta)\)</span></li>
+</ul></li>
+<li>Mixing parameter <span class="math inline">\(\alpha \in (0, 1)\)</span>
+<ul>
+<li><span class="math inline">\(\alpha &gt; 0\)</span> <span class="math inline">\(\longrightarrow\)</span> some components of <span class="math inline">\(\hat\beta(\lambda)=0\)</span> (performs variable selection)</li>
+</ul></li>
+</ul></li>
 </ul>
 </section>
-<section id="key-implementation-points" class="slide level2">
-<h2>Key implementation points</h2>
+<section id="pathwise-solution" class="slide level2">
+<h2>Pathwise Solution</h2>
 <ul>
-<li><strong>No intercept</strong> due to symmetry</li>
-<li><strong>Pairwise comparisons</strong>: not independent</li>
-<li>Subject-based cross-validation essential</li>
+<li><strong>Pathwise algorithm</strong> <span class="citation" data-cites="friedman:2010">(<a href="#/references" role="doc-biblioref" onclick="">Friedman et al., 2010</a>)</span>
+<ul>
+<li>Efficient computation of <span class="math inline">\(\hat\beta(\lambda)\)</span> for all <span class="math inline">\(\lambda\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>glmnet<span class="sc">::</span><span class="fu">glmnet</span>(x, y, <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">intercept =</span> <span class="cn">FALSE</span>, lambda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>x</code>: covariate matrix containing <span class="math inline">\(z_{ij}\)</span> ,</li>
+<li><code>y</code>: response vector <span class="math inline">\(\delta_{ij}\)</span></li>
+<li><code>intercept = FALSE</code> removes intercept</li>
+<li><code>lambda</code>: user-specified <span class="math inline">\(\lambda\)</span> vector</li>
+</ul></li>
 </ul>
 </section>
-<section id="subject-level-cross-validation" class="slide level2">
-<h2>Subject-level cross-validation</h2>
+<section id="cross-validation" class="slide level2">
+<h2>Cross Validation</h2>
 <ul>
-<li>Partition subjects into folds <span class="math inline">\(\mathcal{S}^{(k)}\)</span></li>
-<li>Train on <span class="math inline">\(\mathcal{S}^{(-k)}\)</span>, validate on <span class="math inline">\(\mathcal{S}^{(k)}\)</span></li>
+<li><strong>CV routine for logistic regression</strong> <code>cv.glmnet()</code>
+<ul>
+<li>Partition <em>pairs</em> into <span class="math inline">\(k\)</span> folds—train and validate</li>
+<li>Built-in <code>cv.glmnet()</code></li>
+<li>Not appropriate
+<ul>
+<li>Overlap between analysis and validation sets</li>
+<li>Inflation of sample size</li>
+</ul></li>
+</ul></li>
+<li><strong>Subject-based CV</strong>
+<ul>
+<li>Partition subjects into <span class="math inline">\(k\)</span> folds <span class="math inline">\(\mathcal{S}^{(k)}\)</span></li>
+<li>Train on <span class="math inline">\(\mathcal{S}^{(-k)}\)</span>: <span class="math inline">\(\wh\beta^{(-k)}(\lambda)\)</span> <span class="math inline">\(\longrightarrow\)</span> validate on <span class="math inline">\(\mathcal{S}^{(k)}\)</span></li>
+<li>Identify optimal <span class="math inline">\(\lambda\)</span> maximizing average concordance index</li>
+</ul></li>
+</ul>
+</section>
+<section id="winrisk-score" class="slide level2">
+<h2>Win/Risk Score</h2>
+<ul>
+<li><strong>Motivation</strong>
+<ul>
+<li>Model-predicted win probability given comparability <span class="math display">\[\mu(z_i, z_j;\beta)=\frac{\exp\{\beta^\T(z_i-z_j)\}}{1 + \exp\{\beta^\T(z_i-z_j)\}}\]</span></li>
+<li><span class="math inline">\(\beta^\T z\)</span> measures tendency to win <span class="math display">\[\begin{align*}
+\mu(z_i, z_j;\beta) &gt; 0.5 &amp;\Leftrightarrow \beta^\T z_i &gt; \beta^\T z_j;\\
+\mu(z_i, z_j;\beta) = 0.5 &amp;\Leftrightarrow \beta^\T z_i = \beta^\T z_j;\\
+\mu(z_i, z_j;\beta) &lt; 0.5 &amp;\Leftrightarrow \beta^\T z_i &lt; \beta^\T z_j.
+\end{align*}\]</span></li>
+<li><span class="math inline">\(-\beta^\T z\)</span>: risk score</li>
+</ul></li>
 </ul>
 </section>
 <section id="generalized-concordance-index" class="slide level2">
-<h2>Generalized concordance index</h2>
+<h2>Generalized Concordance Index</h2>
 <ul>
-<li>Win score = <span class="math inline">\(\beta^\top z_i\)</span> for subject <span class="math inline">\(i\)</span></li>
-<li>Concordance = proportion of correctly ranked comparable pairs:</li>
+<li><strong>Validatio/test set</strong> <span class="math inline">\(\mathcal S^*\)</span>
+<ul>
+<li>Pairwise indices <span class="math display">\[
+\mathcal R^* = \{(i,j): \delta_{ij}+\delta_{ji}\neq 0; i&lt;j; i,j\in\S^*\}
+\]</span></li>
+</ul></li>
+<li><strong>Concordance</strong> <span class="citation" data-cites="harrell:1982">(<a href="#/references" role="doc-biblioref" onclick="">Harrell et al., 1982</a>)</span>
+<ul>
+<li>Proportion of correct ranking of pairs <span class="math display">\[\begin{equation}\label{eq:c_index}
+\mathcal C(\S^*;\beta) = |\mathcal R^*|^{-1}\sum_{(i, j)\in\mathcal R^*}
+\bigl[\underbrace{I\{(2\delta_{ij} -1)(\beta^\T z_i - \beta^\T z_j)&gt;0\}}_{\text{Concordant pair}}+2^{-1}
+\underbrace{I(\beta^\T z_i = \beta^\T z_j)}_{\text{Tied score}}\bigr]
+\end{equation}\]</span></li>
+</ul></li>
 </ul>
-<p><span class="math display">\[
-\mathcal{C} = |\mathcal R|^{-1} \sum_{(i,j)\in\mathcal R} I\left\{(2\delta_{ij} - 1)(\beta^\top z_i - \beta^\top z_j) &gt; 0\right\}
-\]</span></p>
+</section>
+<section id="validation-and-testing" class="slide level2">
+<h2>Validation and Testing</h2>
+<ul>
+<li><strong>Model tuning</strong>
+<ul>
+<li><strong><span class="math inline">\(k\)</span>th-fold CV concordance</strong>: <span class="math inline">\(C^{(k)}(\lambda) = \mathcal C\left(\Sk;\wh\beta^{(-k)}(\lambda)\right)\)</span></li>
+<li><strong>Optimal</strong> <span class="math inline">\(\lambda_{\rm opt} = \arg\max_\lambda K^{-1}\sum_{k=1}^K\C^{(k)}(\lambda)\)</span></li>
+<li><strong>Final model</strong>: <span class="math inline">\(\wh\beta(\lambda_{\rm opt})\)</span></li>
+</ul></li>
+<li><strong>Variable importance</strong>
+<ul>
+<li>Component-wise <span class="math inline">\(|\beta|/\text{sd}(z)\)</span></li>
+</ul></li>
+<li><strong>Test C-index</strong>
+<ul>
+<li><span class="math inline">\(\mathcal C(\S^*;\wh\beta(\lambda_{\rm opt}))\)</span> for test set <span class="math inline">\(\S^*\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="workflow---input-data" class="slide level2">
+<h2>Workflow - Input Data</h2>
+<ul>
+<li><strong>Data format</strong>
+<ul>
+<li>Long format with columns: <code>id</code>, <code>time</code>, <code>status</code>, and covariates</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># Load package containing data</span></span>
+<span id="cb2-2"><a></a><span class="fu">library</span>(WR)</span>
+<span id="cb2-3"><a></a>df <span class="ot">&lt;-</span> gbc <span class="co"># n = 686 subjects, p = 9 covariates</span></span>
+<span id="cb2-4"><a></a>df <span class="co"># status = 0 (censored), 1 (death), 2 (recurrence)</span></span>
+<span id="cb2-5"><a></a><span class="co">#&gt;   id      time status hormone age menopause size grade ...</span></span>
+<span id="cb2-6"><a></a><span class="co">#&gt;1   1 43.836066      2       1  38         1   18     3  </span></span>
+<span id="cb2-7"><a></a><span class="co">#&gt;2   1 74.819672      0       1  38         1   18     3  </span></span>
+<span id="cb2-8"><a></a><span class="co">#&gt;3   2 46.557377      2       1  52         1   20     1   </span></span>
+<span id="cb2-9"><a></a><span class="co">#&gt;4   2 65.770492      0       1  52         1   20     1  </span></span>
+<span id="cb2-10"><a></a><span class="co">#&gt;5   3 41.934426      2       1  47         1   30     2   </span></span>
+<span id="cb2-11"><a></a><span class="co">#&gt;...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="workflow---data-partitioning" class="slide level2">
+<h2>Workflow - Data Partitioning</h2>
+<ul>
+<li><strong>Splitting data</strong>
+<ul>
+<li><code>wr_split()</code> function</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># Data partitioning ------------------------------------</span></span>
+<span id="cb3-2"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb3-3"><a></a>obj_split <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> <span class="fu">wr_split</span>(<span class="at">prop =</span> <span class="fl">0.8</span>) <span class="co"># 80% training, 20% test</span></span>
+<span id="cb3-4"><a></a><span class="co"># Take training and test set</span></span>
+<span id="cb3-5"><a></a>df_train <span class="ot">&lt;-</span> obj_split<span class="sc">$</span>df_train</span>
+<span id="cb3-6"><a></a>df_test <span class="ot">&lt;-</span> obj_split<span class="sc">$</span>df_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="workflow---cross-validation-i" class="slide level2">
+<h2>Workflow - Cross-Validation (I)</h2>
+<ul>
+<li><strong><span class="math inline">\(k\)</span>-fold CV</strong>
+<ul>
+<li><code>cv_wrnet(id, time, status, Z, k = 10, ...)</code></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># 10-fold CV -------------------------------------------</span></span>
+<span id="cb4-2"><a></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb4-3"><a></a>obj_cv <span class="ot">&lt;-</span> <span class="fu">cv_wrnet</span>(df_train<span class="sc">$</span>id, df_train<span class="sc">$</span>time, df_train<span class="sc">$</span>status, </span>
+<span id="cb4-4"><a></a>                    df_train <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(id, time, status)))</span>
+<span id="cb4-5"><a></a><span class="co"># Plot CV results (C-index vs log-lambda)</span></span>
+<span id="cb4-6"><a></a>obj_cv <span class="sc">|&gt;</span> </span>
+<span id="cb4-7"><a></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span>  <span class="fu">log</span>(lambda), <span class="at">y =</span> concordance)) <span class="sc">+</span></span>
+<span id="cb4-8"><a></a>   <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb4-9"><a></a><span class="co"># Optimal lambda</span></span>
+<span id="cb4-10"><a></a>lambda_opt <span class="ot">&lt;-</span> obj_cv<span class="sc">$</span>lambda[<span class="fu">which.max</span>(obj_cv<span class="sc">$</span>concordance)]</span>
+<span id="cb4-11"><a></a>lambda_opt</span>
+<span id="cb4-12"><a></a><span class="co">#&gt; [1] 0.0171976</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="workflow---cross-validation-ii" class="slide level2">
+<h2>Workflow - Cross-Validation (II)</h2>
+<ul>
+<li><strong>Validation C-index</strong></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/gbc_cv.png" class="quarto-figure quarto-figure-center" style="width:55.0%"></p>
+</figure>
+</div>
+</section>
+<section id="workflow---final-model" class="slide level2">
+<h2>Workflow - Final Model</h2>
+<ul>
+<li><strong>Fit final model</strong>
+<ul>
+<li><code>wrnet(id, time, status, Z, lambda = lambda_opt, ...)</code></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Final model ------------------------------------------</span></span>
+<span id="cb5-2"><a></a>final_fit <span class="ot">&lt;-</span> <span class="fu">wrnet</span>(df_train<span class="sc">$</span>id, df_train<span class="sc">$</span>time, df_train<span class="sc">$</span>status, </span>
+<span id="cb5-3"><a></a>          df_train <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(id, time, status)), <span class="at">lambda =</span> lambda_opt)</span>
+<span id="cb5-4"><a></a>final_fit<span class="sc">$</span>beta <span class="co"># Estimated coefficients</span></span>
+<span id="cb5-5"><a></a><span class="co">#&gt;                      s0</span></span>
+<span id="cb5-6"><a></a><span class="co">#&gt; hormone     0.306026364</span></span>
+<span id="cb5-7"><a></a><span class="co">#&gt; age         0.003111462</span></span>
+<span id="cb5-8"><a></a><span class="co">#&gt; menopause   .          </span></span>
+<span id="cb5-9"><a></a><span class="co">#&gt; size       -0.007720497</span></span>
+<span id="cb5-10"><a></a><span class="co">#&gt; grade      -0.285511701</span></span>
+<span id="cb5-11"><a></a><span class="co">#&gt; nodes      -0.082227827</span></span>
+<span id="cb5-12"><a></a><span class="co">#&gt; prog_recp   0.001861367</span></span>
+<span id="cb5-13"><a></a><span class="co">#&gt; estrg_recp  .     </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="workflow---variable-importance" class="slide level2">
+<h2>Workflow - Variable Importance</h2>
+<ul>
+<li><strong>Variable importance</strong></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>final_fit <span class="sc">|&gt;</span> <span class="fu">vi_wrnet</span>() <span class="sc">|&gt;</span> <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/gbc_vip.png" class="quarto-figure quarto-figure-center" style="width:52.0%"></p>
+</figure>
+</div>
+</section>
+<section id="workflow---test-performance" class="slide level2">
+<h2>Workflow - Test Performance</h2>
+<ul>
+<li><strong>Overall and component-wise C-index</strong>
+<ul>
+<li><code>test_wrnet(final_fit, df_test)</code></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># Test model performance -------------------------------</span></span>
+<span id="cb7-2"><a></a>test_result <span class="ot">&lt;-</span> final_fit <span class="sc">|&gt;</span> <span class="fu">test_wrnet</span>(df_test)</span>
+<span id="cb7-3"><a></a><span class="co"># Overall and event-specific C-indices</span></span>
+<span id="cb7-4"><a></a>test_result<span class="sc">$</span>concordance</span>
+<span id="cb7-5"><a></a><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span id="cb7-6"><a></a><span class="co">#&gt;   component concordance</span></span>
+<span id="cb7-7"><a></a><span class="co">#&gt;   &lt;chr&gt;           &lt;dbl&gt;</span></span>
+<span id="cb7-8"><a></a><span class="co">#&gt; 1 death           0.724</span></span>
+<span id="cb7-9"><a></a><span class="co">#&gt; 2 nonfatal        0.607</span></span>
+<span id="cb7-10"><a></a><span class="co">#&gt; 3 overall         0.664</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section></section>
 <section>
 <section id="simulations" class="title-slide slide level1 center">
@@ -296,13 +693,37 @@ l_n(\beta;\lambda) = \text{logistic loss} + \lambda\left\{(1-\alpha)||\beta||_2^
 <section id="setup" class="slide level2">
 <h2>Setup</h2>
 <ul>
-<li><span class="math inline">\(p=20\)</span> covariates with AR(1) correlation</li>
-<li>Two outcome components: death and hospitalization</li>
-<li>Two scenarios:
+<li>Covariates: <span class="math inline">\(z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T\)</span>
 <ul>
-<li>Scenario 1: same predictors for both components</li>
-<li>Scenario 2: distinct predictors for death and nonfatal</li>
+<li><span class="math inline">\(z_{\cdot k} \sim N(0,1)\)</span>—AR(1) with <span class="math inline">\(\rho = 0.1\)</span></li>
 </ul></li>
+<li>Outcome model: <span class="math display">\[
+  \pr(D &gt; s, T &gt; t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)
+\]</span>
+<ul>
+<li><span class="math inline">\(\lambda_D = 0.1\)</span>, <span class="math inline">\(\lambda_H = 1\)</span>, <span class="math inline">\(\kappa = 1.25\)</span></li>
+</ul></li>
+<li>Censoring: <span class="math inline">\(\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)\)</span>
+<ul>
+<li><span class="math inline">\(\lambda_C = 0.02\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="two-effect-patterns" class="slide level2">
+<h2>Two Effect Patterns</h2>
+<ul>
+<li><strong>Scenarios</strong>
+<ol type="1">
+<li>Same effect pattern on components <span class="math display">\[
+\beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10},
+\underbrace{0,\ldots, 0}_{p - 10}).
+\]</span></li>
+<li>Different effect patterns on components <span class="math display">\[\begin{align*}
+   \beta_D&amp;=(\underbrace{0.75,\ldots, 0.75}_{5},
+\underbrace{0,\ldots, 0}_{p - 5});\\
+   \beta_H&amp;=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10})
+\end{align*}\]</span></li>
+</ol></li>
 </ul>
 </section>
 <section id="performance-sensitivity-and-specificity" class="slide level2">
@@ -402,20 +823,35 @@ l_n(\beta;\lambda) = \text{logistic loss} + \lambda\left\{(1-\alpha)||\beta||_2^
 <li>Extend to time-varying effects and nonlinearities</li>
 <li>Combine with restricted estimands for precision</li>
 </ul>
-</section></section>
-<section id="references" class="title-slide slide level1 smaller scrollable">
-<h1>References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+</section>
+<section id="references" class="slide level2 smaller scrollable">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-buyse:2010" class="csl-entry" role="listitem">
+Buyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in the two-sample problem. <em>Statistics in Medicine</em>, <em>29</em>, 3245–3257.
+</div>
+<div id="ref-friedman:2010" class="csl-entry" role="listitem">
+Friedman, J., Hastie, T., &amp; Tibshirani, R. (2010). Regularization paths for generalized linear models via coordinate descent. <em>Journal of Statistical Software</em>, <em>33</em>(1), 1.
+</div>
+<div id="ref-harrell:1982" class="csl-entry" role="listitem">
+Harrell, F. E., Califf, R. M., Pryor, D. B., Lee, K. L., &amp; Rosati, R. A. (1982). Evaluating the yield of medical tests. <em>JAMA</em>, <em>247</em>(18), 2543–2546.
+</div>
 <div id="ref-mao2021" class="csl-entry" role="listitem">
-Mao, Lu, and Tuo Wang. 2021. <span>“A Class of Proportional Win-Fractions Regression Models for Composite Outcomes.”</span> <em>Biometrics</em> 77 (4): 1265–75.
+Mao, L., &amp; Wang, T. (2021). A class of proportional win-fractions regression models for composite outcomes. <em>Biometrics</em>, <em>77</em>(4), 1265–1275.
+</div>
+<div id="ref-oakes:2016" class="csl-entry" role="listitem">
+Oakes, D. (2016). On the win-ratio statistic in clinical trials with multiple types of event. <em>Biometrika</em>, <em>103</em>(1), 742–745.
 </div>
 <div id="ref-pocock2012" class="csl-entry" role="listitem">
-Pocock, SJ, CA Ariti, TJ Collier, and D Wang. 2012. <span>“The Win Ratio: A New Approach to the Analysis of Composite Endpoints in Clinical Trials Based on Clinical Priorities.”</span> <em>European Heart Journal</em> 33 (2): 176–12.
+Pocock, S., Ariti, C., Collier, T., &amp; Wang, D. (2012). The win ratio: A new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. <em>European Heart Journal</em>, <em>33</em>(2), 176–112.
+</div>
+<div id="ref-zou:2005" class="csl-entry" role="listitem">
+Zou, H., &amp; Hastie, T. (2005). Regularization and variable selection via the elastic net. <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em>, <em>67</em>(2), 301–320.
 </div>
 </div>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -631,6 +1067,82 @@ Pocock, SJ, CA Ariti, TJ Collier, and D Wang. 2012. <span>“The Win Ratio: A Ne
         ]
       });
     </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {

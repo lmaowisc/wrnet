@@ -37,141 +37,316 @@
   {
     "objectID": "presentation.html#outline",
     "href": "presentation.html#outline",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Outline",
-    "text": "Outline\n\nMotivation and background\nStandard PW model\nRegularized model and implementation\nSimulations\nHF-ACTION application\nSummary and discussion"
+    "text": "Outline\n\nIntroduction\nMethods\n\nStandard win ratio regression\nRegularization and computation\nWRNet workflow\n\nSimulation studies\nHF-ACTION application"
   },
   {
     "objectID": "presentation.html#hierarchical-composite-endpoints",
     "href": "presentation.html#hierarchical-composite-endpoints",
-    "title": "Regularized win ratio regression",
-    "section": "Hierarchical composite endpoints",
-    "text": "Hierarchical composite endpoints\n\nWin ratio (WR): emphasizes clinical priority\n\nDeath &gt; hospitalization &gt; other events\nProposed by Pocock et al. (2012)\n\nComposite endpoint: relative proportion of pairwise wins"
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Hierarchical Composite Endpoints",
+    "text": "Hierarchical Composite Endpoints\n\n\nComposite outcomes\n\nComponents: Death, hospitalization, other events\nStandard approach: Time to first event (e.g., Cox model)\n\n\n\n\n\nWin ratio (WR) (Pocock et al., 2012)\n\nPairwise comparisons: Treatment vs control (Buyse, 2010)\nEach pair: Death &gt; hospitalization (&gt; other events)\nEffect size \\[\n\\text{WR} = \\frac{\\text{Number of wins}}{\\text{Number of losses}}\n\\]"
   },
   {
     "objectID": "presentation.html#limitations-of-current-models",
     "href": "presentation.html#limitations-of-current-models",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Limitations of current models",
     "text": "Limitations of current models\n\nStandard WR regression (PW model) limited to low-dimensional settings\nRegularized Cox model — not ideal for hierarchical outcomes\nNeed: scalable, interpretable method aligned with WR"
   },
   {
     "objectID": "presentation.html#our-contribution",
     "href": "presentation.html#our-contribution",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Our contribution",
     "text": "Our contribution\n\nElastic net regularization for PW model\nSubject-level CV with generalized concordance index\nSoftware: wrnet"
   },
   {
     "objectID": "presentation.html#review-of-standard-model",
     "href": "presentation.html#review-of-standard-model",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Review of standard model",
-    "text": "Review of standard model\n\nFor subjects \\(i, j\\), define pairwise win indicator \\(\\mathcal{W}(Y_i, Y_j)(t)\\)\nPW model (Mao and Wang 2021):\n\n\\[\n\\frac{\\pr\\{\\mathcal{W}(Y_i, Y_j)(t) = 1 \\mid z_i, z_j\\}}{\\pr\\{\\mathcal{W}(Y_j, Y_i)(t) = 1 \\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\top(z_i - z_j)\\right\\}\n\\]\n\n\\(\\beta\\): log-win ratios (interpretability similar to Cox)"
+    "text": "Review of standard model\n\nFor subjects \\(i, j\\), define pairwise win indicator \\(\\mathcal{W}(Y_i, Y_j)(t)\\)\nPW model (Mao & Wang, 2021):\n\n\\[\n\\frac{\\pr\\{\\mathcal{W}(Y_i, Y_j)(t) = 1 \\mid z_i, z_j\\}}{\\pr\\{\\mathcal{W}(Y_j, Y_i)(t) = 1 \\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\top(z_i - z_j)\\right\\}\n\\]\n\n\\(\\beta\\): log-win ratios (interpretability similar to Cox)"
   },
   {
     "objectID": "presentation.html#estimation",
     "href": "presentation.html#estimation",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Estimation",
-    "text": "Estimation\n\nSolve \\(U\\)-estimating equation:\n\n\\[\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i,j)\\in\\mathcal R} z_{ij}\\left\\{\\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})}\\right\\}\n\\]\n\nNumerically equivalent to logistic regression score function (no intercept)"
+    "text": "Estimation\n\n\nEstimator: solving \\[\nU_n(\\hat\\beta) \\;\\;= 0\n\\]\n\nStandard Newton–Raphson algorithm\n\n\n\n\n\nConnection with logistic regression\n\n\\(U_n(\\hat\\beta)\\) equivalent to logistic score function (no intercept)\nEach comparable \\((i, j)\\) pair as an observation\n\n\\(\\delta_{ij}\\): binary response\n\\(z_{ij}\\): covariates"
   },
   {
     "objectID": "presentation.html#objective-function",
     "href": "presentation.html#objective-function",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Objective function",
     "text": "Objective function\n\nUse elastic net penalty (zou2005?):\n\n\\[\nl_n(\\beta;\\lambda) = \\text{logistic loss} + \\lambda\\left\\{(1-\\alpha)||\\beta||_2^2/2 + \\alpha||\\beta||_1\\right\\}\n\\]\n\nComputed efficiently using glmnet() with custom design matrix"
   },
   {
     "objectID": "presentation.html#key-implementation-points",
     "href": "presentation.html#key-implementation-points",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Key implementation points",
     "text": "Key implementation points\n\nNo intercept due to symmetry\nPairwise comparisons: not independent\nSubject-based cross-validation essential"
   },
   {
     "objectID": "presentation.html#subject-level-cross-validation",
     "href": "presentation.html#subject-level-cross-validation",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Subject-level cross-validation",
     "text": "Subject-level cross-validation\n\nPartition subjects into folds \\(\\mathcal{S}^{(k)}\\)\nTrain on \\(\\mathcal{S}^{(-k)}\\), validate on \\(\\mathcal{S}^{(k)}\\)"
   },
   {
     "objectID": "presentation.html#generalized-concordance-index",
     "href": "presentation.html#generalized-concordance-index",
-    "title": "Regularized win ratio regression",
-    "section": "Generalized concordance index",
-    "text": "Generalized concordance index\n\nWin score = \\(\\beta^\\top z_i\\) for subject \\(i\\)\nConcordance = proportion of correctly ranked comparable pairs:\n\n\\[\n\\mathcal{C} = |\\mathcal R|^{-1} \\sum_{(i,j)\\in\\mathcal R} I\\left\\{(2\\delta_{ij} - 1)(\\beta^\\top z_i - \\beta^\\top z_j) &gt; 0\\right\\}\n\\]"
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Generalized Concordance Index",
+    "text": "Generalized Concordance Index\n\nValidatio/test set \\(\\mathcal S^*\\)\n\nPairwise indices \\[\n\\mathcal R^* = \\{(i,j): \\delta_{ij}+\\delta_{ji}\\neq 0; i&lt;j; i,j\\in\\S^*\\}\n\\]\n\nConcordance (Harrell et al., 1982)\n\nProportion of correct ranking of pairs \\[\\begin{equation}\\label{eq:c_index}\n\\mathcal C(\\S^*;\\beta) = |\\mathcal R^*|^{-1}\\sum_{(i, j)\\in\\mathcal R^*}\n\\bigl[\\underbrace{I\\{(2\\delta_{ij} -1)(\\beta^\\T z_i - \\beta^\\T z_j)&gt;0\\}}_{\\text{Concordant pair}}+2^{-1}\n\\underbrace{I(\\beta^\\T z_i = \\beta^\\T z_j)}_{\\text{Tied score}}\\bigr]\n\\end{equation}\\]"
   },
   {
     "objectID": "presentation.html#setup",
     "href": "presentation.html#setup",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Setup",
-    "text": "Setup\n\n\\(p=20\\) covariates with AR(1) correlation\nTwo outcome components: death and hospitalization\nTwo scenarios:\n\nScenario 1: same predictors for both components\nScenario 2: distinct predictors for death and nonfatal"
+    "text": "Setup\n\nCovariates: \\(z = (z_{\\cdot 1}, z_{\\cdot 2}, \\ldots, z_{\\cdot p})^\\T\\)\n\n\\(z_{\\cdot k} \\sim N(0,1)\\)—AR(1) with \\(\\rho = 0.1\\)\n\nOutcome model: \\[\n  \\pr(D &gt; s, T &gt; t\\mid z) = \\exp\\left(-\\left[\\{\\exp(-\\beta_D^\\T z)\\lambda_Ds\\}^\\kappa + \\{\\exp(-\\beta_H^\\T z)\\lambda_Ht\\}^\\kappa\\right]^{1/\\kappa}\\right)\n\\]\n\n\\(\\lambda_D = 0.1\\), \\(\\lambda_H = 1\\), \\(\\kappa = 1.25\\)\n\nCensoring: \\(\\mbox{Un}[0.2, 4]\\wedge\\mbox{Expn}(\\lambda_C)\\)\n\n\\(\\lambda_C = 0.02\\)"
   },
   {
     "objectID": "presentation.html#performance-sensitivity-and-specificity",
     "href": "presentation.html#performance-sensitivity-and-specificity",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Performance: Sensitivity and Specificity",
     "text": "Performance: Sensitivity and Specificity\n\nCompare variable selection accuracy between WR and Cox\nWR consistently better in identifying true features\nEspecially better in Scenario 2 when component effects differ"
   },
   {
     "objectID": "presentation.html#predictive-accuracy-c-index",
     "href": "presentation.html#predictive-accuracy-c-index",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Predictive accuracy (C-index)",
     "text": "Predictive accuracy (C-index)\n\n\n\n\n\n\nIn Scenario 2, WR has better prognostic performance for death and overall"
   },
   {
     "objectID": "presentation.html#dataset-and-setup",
     "href": "presentation.html#dataset-and-setup",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Dataset and setup",
     "text": "Dataset and setup\n\nSubset: \\(n=426\\) high-risk patients (CPX duration \\(\\leq 9\\) min)\nOutcomes: death &gt; hospitalization\n\\(p=153\\) baseline features\nTrain-test split: 80%/20%"
   },
   {
     "objectID": "presentation.html#cross-validation-comparison",
     "href": "presentation.html#cross-validation-comparison",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Cross-validation comparison",
     "text": "Cross-validation comparison\n\n\n\n\n\n\nNaive CV on pairs leads to overfitting\nSubject-level CV identifies optimal \\(\\lambda\\) properly"
   },
   {
     "objectID": "presentation.html#test-performance",
     "href": "presentation.html#test-performance",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Test performance",
     "text": "Test performance\n\n\n\n\n\n\nWR model better stratifies high-risk patients\nOutperforms Cox in predicting deaths"
   },
   {
     "objectID": "presentation.html#variable-importance",
     "href": "presentation.html#variable-importance",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Variable importance",
     "text": "Variable importance\n\n\n\n\n\n\nWR model selects 20 interpretable variables\nTop predictors include sex, valve surgery, CPX metrics"
   },
   {
     "objectID": "presentation.html#summary",
     "href": "presentation.html#summary",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Summary",
     "text": "Summary\n\nDeveloped elastic net-regularized WR regression\nBetter aligns with clinical priorities than Cox\nAccurate feature selection and prediction"
   },
   {
     "objectID": "presentation.html#tools",
     "href": "presentation.html#tools",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Tools",
     "text": "Tools\n\nR package wrnet\nEfficient implementation with glmnet() backend\nSupports CV, test evaluation, and variable importance"
   },
   {
     "objectID": "presentation.html#future-directions",
     "href": "presentation.html#future-directions",
-    "title": "Regularized win ratio regression",
+    "title": "WRNet: Regularized win ratio regression",
     "section": "Future directions",
     "text": "Future directions\n\nExplore \\(\\alpha \\in (0,1)\\) settings\nExtend to time-varying effects and nonlinearities\nCombine with restricted estimands for precision"
+  },
+  {
+    "objectID": "presentation.html#data-and-notation",
+    "href": "presentation.html#data-and-notation",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Data and Notation",
+    "text": "Data and Notation\n\n\nOutcomes data (subject \\(i\\))\n\n\\(D_i\\): time to death\n\\(T_i\\): time to first nonfatal event\n\\(\\bs Y_i(t) =(D_i\\wedge t, T_i\\wedge t)\\): cumulative data at \\(t\\)\n\n\\(x\\wedge y = \\min(x, y)\\)\n\n\n\n\n\n\nWin indicator \\[\\begin{align*}\\label{eq:win2tier}\n\\W(\\bs Y_i, \\bs Y_j)(t) = \\underbrace{I(D_j&lt; D_i\\wedge t)}_{\\mbox{Win on survival}}\n+ \\underbrace{I(D_i\\wedge D_j &gt;t,\\; T_j&lt; T_i\\wedge t)}_\n{\\mbox{Tie on survival, win on nonfatal event}}\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "presentation.html#win-ratio-regression",
+    "href": "presentation.html#win-ratio-regression",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Win Ratio Regression",
+    "text": "Win Ratio Regression\n\n\nSemiparametric regression \\[\\begin{equation}\\label{eq:pw}\n\\frac{\\pr\\{\\W(\\bs Y_i, \\bs Y_j)(t) = 1\\mid z_i, z_j\\}}{\\pr\\{\\W(\\bs Y_j, \\bs Y_i)(t) = 1\\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\T(z_i - z_j)\\right\\}\n\\end{equation}\\]\n\n\\(z\\): \\(p\\)-dimensional covariates\nProportional win-fractions (PW) model\n\nEquivalent to Cox PH model in univariate case (Oakes, 2016)—WR = 1/HR\n\n\\(\\exp(\\beta)\\): win ratios associated with unit increases in \\(z\\)\n\n\n\n\n\nLimitation\n\nLow-dimensional setting (\\(p&lt;&lt; n\\))"
+  },
+  {
+    "objectID": "presentation.html#goals",
+    "href": "presentation.html#goals",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Goals",
+    "text": "Goals\n\n\nObjectives:\n\nAutomate variable selection in WR regression\n\nEnhance prediction accuracy and model parsimony\n\n\n\n\n\nApproach:\n\nApply elastic net regularization to PW model\n\nMixture of \\(L_1\\) (lasso) and \\(L_2\\) (ridge) penalties\n\n\nImplemented in wrnet R package"
+  },
+  {
+    "objectID": "presentation.html#standard-regression-method",
+    "href": "presentation.html#standard-regression-method",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Standard Regression Method",
+    "text": "Standard Regression Method\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes observed up to \\(X_i = D_i \\wedge C_i\\)\n\\(C_i\\): right censoring time\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\)\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\)\n\n\n\n\n\nComparable pairs:\n\n\\((i, j)\\) is comparable if \\(\\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j) + \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) &gt; 0\\)\nDenote set of comparable pairs by \\(\\mathcal{R}\\)"
+  },
+  {
+    "objectID": "presentation.html#standard-estimating-equation",
+    "href": "presentation.html#standard-estimating-equation",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Standard Estimating Equation",
+    "text": "Standard Estimating Equation\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) + \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) &gt; 0\\}\\): set of comparable pairs"
+  },
+  {
+    "objectID": "presentation.html#standard-model-fitting",
+    "href": "presentation.html#standard-model-fitting",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Standard Model-Fitting",
+    "text": "Standard Model-Fitting\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) + \\mathcal{W}(\\bs Y_j, \\bs Y_i)(X_i \\wedge X_j) &gt; 0\\}\\): set of comparable pairs"
+  },
+  {
+    "objectID": "presentation.html#regularized-pw-model",
+    "href": "presentation.html#regularized-pw-model",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Regularized PW model",
+    "text": "Regularized PW model\n\nObjective function (Zou & Hastie, 2005): \\[\\begin{align}\\label{eq:obj_fun}\nl_n(\\beta;\\lambda) &= - |\\mathcal R|^{-1}\\sum_{(i, j)\\in\\mathcal R}\\left[\\delta_{ij}\\beta^\\T z_{ij} - \\log\\{1+\\exp(\\beta^\\T z_{ij})\\}\\right]\\notag\\\\\n&\\hspace{3em}+\\lambda\\left\\{(1-\\alpha)||\\beta||_2^2/2+\\alpha||\\beta||_1\\right\\}\n\\end{align}\\]\n\nPathwise solution \\(\\hat\\beta(\\lambda) = \\arg\\min_\\beta l_n(\\beta;\\lambda)\\)\n\nNumerically equivalent to regularized logistic regression\n\nTuning parameter \\(\\lambda\\geq 0\\)—determined by cross-validation (CV)\n\n\\(\\partial l_n(\\beta; 0)/\\partial\\beta = U_n(\\beta)\\)\n\nMixing parameter \\(\\alpha \\in (0, 1)\\)\n\n\\(\\alpha &gt; 0\\) \\(\\longrightarrow\\) some components of \\(\\hat\\beta(\\lambda)=0\\) (performs variable selection)"
+  },
+  {
+    "objectID": "presentation.html#references",
+    "href": "presentation.html#references",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "References",
+    "text": "References\n\n\nBuyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in the two-sample problem. Statistics in Medicine, 29, 3245–3257.\n\n\nFriedman, J., Hastie, T., & Tibshirani, R. (2010). Regularization paths for generalized linear models via coordinate descent. Journal of Statistical Software, 33(1), 1.\n\n\nHarrell, F. E., Califf, R. M., Pryor, D. B., Lee, K. L., & Rosati, R. A. (1982). Evaluating the yield of medical tests. JAMA, 247(18), 2543–2546.\n\n\nMao, L., & Wang, T. (2021). A class of proportional win-fractions regression models for composite outcomes. Biometrics, 77(4), 1265–1275.\n\n\nOakes, D. (2016). On the win-ratio statistic in clinical trials with multiple types of event. Biometrika, 103(1), 742–745.\n\n\nPocock, S., Ariti, C., Collier, T., & Wang, D. (2012). The win ratio: A new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. European Heart Journal, 33(2), 176–112.\n\n\nZou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society Series B: Statistical Methodology, 67(2), 301–320."
+  },
+  {
+    "objectID": "presentation.html#pathwise-solution",
+    "href": "presentation.html#pathwise-solution",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Pathwise Solution",
+    "text": "Pathwise Solution\n\nPathwise algorithm (Friedman et al., 2010)\n\nEfficient computation of \\(\\hat\\beta(\\lambda)\\) for all \\(\\lambda\\)\n\n\nglmnet::glmnet(x, y, family = \"binomial\", intercept = FALSE, lambda)\n\n\nx: covariate matrix containing \\(z_{ij}\\) ,\ny: response vector \\(\\delta_{ij}\\)\nintercept = FALSE removes intercept\nlambda: user-specified \\(\\lambda\\) vector"
+  },
+  {
+    "objectID": "presentation.html#cross-validation",
+    "href": "presentation.html#cross-validation",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Cross Validation",
+    "text": "Cross Validation\n\nCV routine for logistic regression cv.glmnet()\n\nPartition pairs into \\(k\\) folds—train and validate\nBuilt-in cv.glmnet()\nNot appropriate\n\nOverlap between analysis and validation sets\nInflation of sample size\n\n\nSubject-based CV\n\nPartition subjects into \\(k\\) folds \\(\\mathcal{S}^{(k)}\\)\nTrain on \\(\\mathcal{S}^{(-k)}\\): \\(\\wh\\beta^{(-k)}(\\lambda)\\) \\(\\longrightarrow\\) validate on \\(\\mathcal{S}^{(k)}\\)\nIdentify optimal \\(\\lambda\\) maximizing average concordance index"
+  },
+  {
+    "objectID": "presentation.html#generalized-concordance-index-1",
+    "href": "presentation.html#generalized-concordance-index-1",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Generalized concordance index",
+    "text": "Generalized concordance index\n\nWin score = \\(\\beta^\\top z_i\\) for subject \\(i\\)\nConcordance = proportion of correctly ranked comparable pairs:\n\n\\[\n\\mathcal{C} = |\\mathcal R|^{-1} \\sum_{(i,j)\\in\\mathcal R} I\\left\\{(2\\delta_{ij} - 1)(\\beta^\\top z_i - \\beta^\\top z_j) &gt; 0\\right\\}\n\\]"
+  },
+  {
+    "objectID": "presentation.html#win-score",
+    "href": "presentation.html#win-score",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Win Score",
+    "text": "Win Score\n\nMotivation\n\nModel-predicted win probability given comparability \\[\\mu(z_i, z_j;\\beta)=\\frac{\\exp\\{\\beta^\\T(z_i-z_j)\\}}{1 + \\exp\\{\\beta^\\T(z_i-z_j)\\}}\\]\n\\(\\beta^\\T z\\) measures tendency to win \\[\\begin{align*}\n\\mu(z_i, z_j;\\beta) &gt; 0.5 &\\Leftrightarrow \\beta^\\T z_i &gt; \\beta^\\T z_j;\\\\\n\\mu(z_i, z_j;\\beta) = 0.5 &\\Leftrightarrow \\beta^\\T z_i = \\beta^\\T z_j;\\\\\n\\mu(z_i, z_j;\\beta) &lt; 0.5 &\\Leftrightarrow \\beta^\\T z_i &lt; \\beta^\\T z_j.\n\\end{align*}\\]\n\\(-\\beta^\\T z\\): risk score"
+  },
+  {
+    "objectID": "presentation.html#validation-and-testing",
+    "href": "presentation.html#validation-and-testing",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Validation and Testing",
+    "text": "Validation and Testing\n\nModel tuning\n\n\\(k\\)th-fold CV concordance: \\(C^{(k)}(\\lambda) = \\mathcal C\\left(\\Sk;\\wh\\beta^{(-k)}(\\lambda)\\right)\\)\nOptimal \\(\\lambda_{\\rm opt} = \\arg\\max_\\lambda K^{-1}\\sum_{k=1}^K\\C^{(k)}(\\lambda)\\)\nFinal model: \\(\\wh\\beta(\\lambda_{\\rm opt})\\)\n\nVariable importance\n\nComponent-wise \\(|\\beta|/\\text{sd}(z)\\)\n\nTest C-index\n\n\\(\\mathcal C(\\S^*;\\wh\\beta(\\lambda_{\\rm opt}))\\) for test set \\(\\S^*\\)"
+  },
+  {
+    "objectID": "presentation.html#workflow---data-partitioning",
+    "href": "presentation.html#workflow---data-partitioning",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Data Partitioning",
+    "text": "Workflow - Data Partitioning\n\nSplitting data\n\nwr_split() function\n\n\n\n# Data partitioning ------------------------------------\nset.seed(123)\nobj_split &lt;- df |&gt; wr_split(prop = 0.8) # 80% training, 20% test\n# Take training and test set\ndf_train &lt;- obj_split$df_train\ndf_test &lt;- obj_split$df_test"
+  },
+  {
+    "objectID": "presentation.html#workflow---input-data",
+    "href": "presentation.html#workflow---input-data",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Input Data",
+    "text": "Workflow - Input Data\n\nData format\n\nLong format with columns: id, time, status, and covariates\n\n\n\n# Load package containing data\nlibrary(WR)\ndf &lt;- gbc # n = 686 subjects, p = 9 covariates\ndf # status = 0 (censored), 1 (death), 2 (recurrence)\n#&gt;   id      time status hormone age menopause size grade ...\n#&gt;1   1 43.836066      2       1  38         1   18     3  \n#&gt;2   1 74.819672      0       1  38         1   18     3  \n#&gt;3   2 46.557377      2       1  52         1   20     1   \n#&gt;4   2 65.770492      0       1  52         1   20     1  \n#&gt;5   3 41.934426      2       1  47         1   30     2   \n#&gt;..."
+  },
+  {
+    "objectID": "presentation.html#workflow---cross-validation",
+    "href": "presentation.html#workflow---cross-validation",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Cross-Validation",
+    "text": "Workflow - Cross-Validation\n\n\\(k\\)-fold CV\n\ncv_wrnet(id, time, status, Z, k = 10, ...)\n\n\n\n# 10-fold CV -------------------------------------------\nset.seed(1234)\nobj_cv &lt;- cv_wrnet(df_train$id, df_train$time, df_train$status, \n                    df_train |&gt; select(-c(id, time, status)))\n# Plot CV results (C-index vs log-lambda)\nobj_cv |&gt; \n   ggplot(\n    aes(x =  log(lambda), y = concordance)\n   ) +\n   geom_point() +\n   geom_line() +\n   theme_minimal()"
+  },
+  {
+    "objectID": "presentation.html#workflow---cross-validation-i",
+    "href": "presentation.html#workflow---cross-validation-i",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Cross-Validation (I)",
+    "text": "Workflow - Cross-Validation (I)\n\n\\(k\\)-fold CV\n\ncv_wrnet(id, time, status, Z, k = 10, ...)\n\n\n\n# 10-fold CV -------------------------------------------\nset.seed(1234)\nobj_cv &lt;- cv_wrnet(df_train$id, df_train$time, df_train$status, \n                    df_train |&gt; select(-c(id, time, status)))\n# Plot CV results (C-index vs log-lambda)\nobj_cv |&gt; \n   ggplot(aes(x =  log(lambda), y = concordance)) +\n   geom_point() + geom_line() + theme_minimal()\n# Optimal lambda\nlambda_opt &lt;- obj_cv$lambda[which.max(obj_cv$concordance)]\nlambda_opt\n#&gt; [1] 0.0171976"
+  },
+  {
+    "objectID": "presentation.html#workflow---cross-validation-i-1",
+    "href": "presentation.html#workflow---cross-validation-i-1",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Cross-Validation (I)",
+    "text": "Workflow - Cross-Validation (I)\n\nValidation C-index"
+  },
+  {
+    "objectID": "presentation.html#workflow---cross-validation-ii",
+    "href": "presentation.html#workflow---cross-validation-ii",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Cross-Validation (II)",
+    "text": "Workflow - Cross-Validation (II)\n\nValidation C-index"
+  },
+  {
+    "objectID": "presentation.html#workflow---final-model",
+    "href": "presentation.html#workflow---final-model",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Final Model",
+    "text": "Workflow - Final Model\n\nFit final model\n\nwrnet(id, time, status, Z, lambda = lambda_opt, ...)\n\n\n\n# Final model ------------------------------------------\nfinal_fit &lt;- wrnet(df_train$id, df_train$time, df_train$status, \n          df_train |&gt; select(-c(id, time, status)), lambda = lambda_opt)\nfinal_fit$beta # Estimated coefficients\n#&gt;                      s0\n#&gt; hormone     0.306026364\n#&gt; age         0.003111462\n#&gt; menopause   .          \n#&gt; size       -0.007720497\n#&gt; grade      -0.285511701\n#&gt; nodes      -0.082227827\n#&gt; prog_recp   0.001861367\n#&gt; estrg_recp  ."
+  },
+  {
+    "objectID": "presentation.html#workflow---variable-importance",
+    "href": "presentation.html#workflow---variable-importance",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Variable Importance",
+    "text": "Workflow - Variable Importance\n\nVariable importance\n\n\nfinal_fit |&gt; vi_wrnet() |&gt; vip()"
+  },
+  {
+    "objectID": "presentation.html#workflow---test-performance",
+    "href": "presentation.html#workflow---test-performance",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Workflow - Test Performance",
+    "text": "Workflow - Test Performance\n\nOverall and component-wise C-index\n\ntest_wrnet(final_fit, df_test)\n\n\n\n# Test model performance -------------------------------\ntest_result &lt;- final_fit |&gt; test_wrnet(df_test)\n# Overall and event-specific C-indices\ntest_result$concordance\n#&gt; # A tibble: 3 × 2\n#&gt;   component concordance\n#&gt;   &lt;chr&gt;           &lt;dbl&gt;\n#&gt; 1 death           0.724\n#&gt; 2 nonfatal        0.607\n#&gt; 3 overall         0.664"
+  },
+  {
+    "objectID": "presentation.html#scenarios",
+    "href": "presentation.html#scenarios",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Scenarios",
+    "text": "Scenarios\n\nScenarios\n\nSame effect pattern on components \\[\n\\beta_D=\\beta_H=(\\underbrace{0.5,\\ldots, 0.5}_{10},\n\\underbrace{0,\\ldots, 0}_{p - 10}).\n\\]\nDifferent effect patterns on components \\[\\begin{align*}\n   \\beta_D&=(\\underbrace{0.75,\\ldots, 0.75}_{5},\n\\underbrace{0,\\ldots, 0}_{p - 5});\\\\\n   \\beta_H&=(\\underbrace{0,\\ldots, 0}_{5}, \\underbrace{0.75,\\ldots, 0.75}_{5}, \\underbrace{0,\\ldots, 0}_{p - 10})\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "presentation.html#winrisk-score",
+    "href": "presentation.html#winrisk-score",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Win/Risk Score",
+    "text": "Win/Risk Score\n\nMotivation\n\nModel-predicted win probability given comparability \\[\\mu(z_i, z_j;\\beta)=\\frac{\\exp\\{\\beta^\\T(z_i-z_j)\\}}{1 + \\exp\\{\\beta^\\T(z_i-z_j)\\}}\\]\n\\(\\beta^\\T z\\) measures tendency to win \\[\\begin{align*}\n\\mu(z_i, z_j;\\beta) &gt; 0.5 &\\Leftrightarrow \\beta^\\T z_i &gt; \\beta^\\T z_j;\\\\\n\\mu(z_i, z_j;\\beta) = 0.5 &\\Leftrightarrow \\beta^\\T z_i = \\beta^\\T z_j;\\\\\n\\mu(z_i, z_j;\\beta) &lt; 0.5 &\\Leftrightarrow \\beta^\\T z_i &lt; \\beta^\\T z_j.\n\\end{align*}\\]\n\\(-\\beta^\\T z\\): risk score"
+  },
+  {
+    "objectID": "presentation.html#two-effect-patterns",
+    "href": "presentation.html#two-effect-patterns",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Two Effect Patterns",
+    "text": "Two Effect Patterns\n\nScenarios\n\nSame effect pattern on components \\[\n\\beta_D=\\beta_H=(\\underbrace{0.5,\\ldots, 0.5}_{10},\n\\underbrace{0,\\ldots, 0}_{p - 10}).\n\\]\nDifferent effect patterns on components \\[\\begin{align*}\n   \\beta_D&=(\\underbrace{0.75,\\ldots, 0.75}_{5},\n\\underbrace{0,\\ldots, 0}_{p - 5});\\\\\n   \\beta_H&=(\\underbrace{0,\\ldots, 0}_{5}, \\underbrace{0.75,\\ldots, 0.75}_{5}, \\underbrace{0,\\ldots, 0}_{p - 10})\n\\end{align*}\\]"
   }
 ]

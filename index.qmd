@@ -11,6 +11,8 @@ nocite: |
 
 **WRNet** is a machine-learning approach for regularized win ratio regression tailored to hierarchical composite endpoints. It optimizes feature selection and risk prediction through an elastic net-type penalty on regression coefficients (log-win ratios), making it suitable for high-dimensional data.
 
+-   [Presentation](presentation.html) (4/4/2025)
+
 ## Basics
 
 When comparing two subjects $i$ vs $j$ at time $t$, a *winner* is defined as the subject with either:
@@ -19,7 +21,6 @@ When comparing two subjects $i$ vs $j$ at time $t$, a *winner* is defined as the
 2.  **Longer event-free survival**, if both survive past $t$.
 
 In this way, death is prioritized over nonfatal events.
-
 
 A basic win ratio model is expressed as: $$
 \frac{P(\text{Subject $i$ wins by time $t$})}{P(\text{Subject $j$ wins by time $t$})} = \exp\{\beta^{\rm T}(z_i - z_j)\}.
@@ -31,7 +32,7 @@ $$ For high-dimensional covariates $z$, the model is regularized using a combina
 
 ### Installation
 
-Download and compile the R functions from the `wrnet_functions.R` script available at the  [GitHub repository](https://github.com/lmaowisc/wrnet).
+Download and compile the R functions from the `wrnet_functions.R` script available at the [GitHub repository](https://github.com/lmaowisc/wrnet).
 
 ```{r}
 source("wrnet_functions.R")

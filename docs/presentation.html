@@ -217,7 +217,7 @@
   <div class="reveal">
     <div class="slides">
 
-<section id="title-slide" data-background-image="jsm_logo1.png" data-background-position="50% 2%" data-background-size="18%" class="quarto-title-block center">
+<section id="title-slide" data-background-image="figs/OSU-PublicHealth-Horiz-RGBHEX.png" data-background-position="5% 5%" data-background-size="38%" class="quarto-title-block center">
   <h1 class="title"><code>WRNet</code>: Regularized win ratio regression</h1>
   <p class="subtitle">Variable selection and risk prediction with hierarchical composite outcomes</p>
 
@@ -283,17 +283,12 @@ Lu Mao
 </section>
 <section id="hierarchical-composite-endpoints" class="slide level2">
 <h2>Hierarchical Composite Endpoints</h2>
-<div class="fragment">
 <ul>
 <li><strong>Composite outcomes</strong>
 <ul>
 <li><strong>Components</strong>: Death, hospitalization, other events</li>
 <li><strong>Standard approach</strong>: Time to first event (e.g., Cox model)</li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Win ratio (WR)</strong> <span class="citation" data-cites="pocock2012">(<a href="#/references" role="doc-biblioref" onclick="">Pocock et al., 2012</a>)</span>
 <ul>
 <li><strong>Pairwise comparisons</strong>: Treatment vs control <span class="citation" data-cites="buyse:2010">(<a href="#/references" role="doc-biblioref" onclick="">Buyse, 2010</a>)</span></li>
@@ -303,11 +298,9 @@ Lu Mao
 \]</span></li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="data-and-notation" class="slide level2">
 <h2>Data and Notation</h2>
-<div class="fragment">
 <ul>
 <li><strong>Outcomes data</strong> (subject <span class="math inline">\(i\)</span>)
 <ul>
@@ -318,21 +311,15 @@ Lu Mao
 <li><span class="math inline">\(x\wedge y = \min(x, y)\)</span></li>
 </ul></li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Win indicator</strong> <span class="math display">\[\begin{align*}\label{eq:win2tier}
 \W(\bs Y_i, \bs Y_j)(t) = \underbrace{I(D_j&lt; D_i\wedge t)}_{\mbox{Win on survival}}
 + \underbrace{I(D_i\wedge D_j &gt;t,\; T_j&lt; T_i\wedge t)}_
 {\mbox{Tie on survival, win on nonfatal event}}
 \end{align*}\]</span></li>
 </ul>
-</div>
 </section>
 <section id="win-ratio-regression" class="slide level2">
 <h2>Win Ratio Regression</h2>
-<div class="fragment">
 <ul>
 <li><strong>Semiparametric regression</strong> <span class="math display">\[\begin{equation}\label{eq:pw}
 \frac{\pr\{\W(\bs Y_i, \bs Y_j)(t) = 1\mid z_i, z_j\}}{\pr\{\W(\bs Y_j, \bs Y_i)(t) = 1\mid z_j, z_i\}} = \exp\left\{\beta^\T(z_i - z_j)\right\}
@@ -345,17 +332,11 @@ Lu Mao
 </ul></li>
 <li><span class="math inline">\(\exp(\beta)\)</span>: win ratios associated with unit increases in <span class="math inline">\(z\)</span></li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Limitation</strong>: <span class="math inline">\(p&lt;&lt; n\)</span> <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. --></li>
 </ul>
-</div>
 </section>
 <section id="goals" class="slide level2">
 <h2>Goals</h2>
-<div class="fragment">
 <ul>
 <li><strong>Objectives</strong>:
 <ul>
@@ -363,10 +344,6 @@ Lu Mao
 </li>
 <li>Enhance prediction accuracy and model parsimony</li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Approach</strong>:
 <ul>
 <li>Apply <strong>elastic net</strong> regularization to PW model
@@ -377,7 +354,6 @@ Lu Mao
 <li>Implemented in <a href="https://lmaowisc.github.io/wrnet/"><code>wrnet</code></a> R package</li>
 </ul></li>
 </ul>
-</div>
 </section></section>
 <section>
 <section id="methods" class="title-slide slide level1 center">
@@ -386,16 +362,11 @@ Lu Mao
 </section>
 <section id="standard-model-fitting" class="slide level2">
 <h2>Standard Model-Fitting</h2>
-<div class="fragment">
 <ul>
 <li><strong>Observed data</strong>
 <ul>
 <li><span class="math inline">\(\bs Y_i(X_i)\)</span>: outcomes data up to <span class="math inline">\(X_i = D_i \wedge C_i\)</span> (<span class="math inline">\(C_i\)</span>: censoring time)</li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Estimating equation</strong> <span class="citation" data-cites="mao2021">(<a href="#/references" role="doc-biblioref" onclick="">Mao &amp; Wang, 2021</a>)</span> <span class="math display">\[\begin{equation}
 U_n(\beta) = |\mathcal R|^{-1} \sum_{(i, j)\in \mathcal R}
 z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})} \right\}
@@ -407,11 +378,9 @@ z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top 
 <li><span class="math inline">\(\mathcal{R}=\{(i, j): \delta_{ij} + \delta_{ji} &gt; 0\}\)</span>: set of <em>comparable</em> pairs</li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="estimation" class="slide level2">
 <h2>Estimation</h2>
-<div class="fragment">
 <ul>
 <li><strong>Estimator</strong>: solving <span class="math display">\[
 U_n(\hat\beta) \;\;= 0
@@ -419,10 +388,6 @@ U_n(\hat\beta) \;\;= 0
 <ul>
 <li>Standard Newton–Raphson algorithm</li>
 </ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li><strong>Connection with logistic regression</strong>
 <ul>
 <li><span class="math inline">\(U_n(\hat\beta)\)</span> equivalent to logistic score function (no intercept)</li>
@@ -433,7 +398,6 @@ U_n(\hat\beta) \;\;= 0
 </ul></li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="regularized-pw-model" class="slide level2">
 <h2>Regularized PW model</h2>
@@ -461,7 +425,7 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section id="pathwise-solution" class="slide level2">
 <h2>Pathwise Solution</h2>
 <ul>
-<li><strong>Pathwise algorithm</strong> <span class="citation" data-cites="friedman:2010">(<a href="#/references" role="doc-biblioref" onclick="">Friedman et al., 2010</a>)</span>
+<li><p><strong>Pathwise algorithm</strong> <span class="citation" data-cites="friedman:2010">(<a href="#/references" role="doc-biblioref" onclick="">Friedman et al., 2010</a>)</span></p>
 <ul>
 <li>Efficient computation of <span class="math inline">\(\hat\beta(\lambda)\)</span> for all <span class="math inline">\(\lambda\)</span></li>
 </ul>
@@ -521,7 +485,7 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 \mathcal R^* = \{(i,j): \delta_{ij}+\delta_{ji}\neq 0; i&lt;j; i,j\in\S^*\}
 \]</span></li>
 </ul></li>
-<li><strong>Concordance</strong> <span class="citation" data-cites="harrell:1982">(<a href="#/references" role="doc-biblioref" onclick="">Harrell et al., 1982</a>)</span>
+<li><strong>Concordance</strong> <span class="citation" data-cites="harrell:1982 uno:2011 cheung:2019">(<a href="#/references" role="doc-biblioref" onclick="">Cheung et al., 2019</a>; <a href="#/references" role="doc-biblioref" onclick="">Harrell et al., 1982</a>; <a href="#/references" role="doc-biblioref" onclick="">Uno et al., 2011</a>)</span>
 <ul>
 <li>Proportion of correct ranking of pairs <span class="math display">\[\begin{equation}\label{eq:c_index}
 \mathcal C(\S^*;\beta) = |\mathcal R^*|^{-1}\sum_{(i, j)\in\mathcal R^*}
@@ -536,7 +500,7 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <ul>
 <li><strong>Model tuning</strong>
 <ul>
-<li><strong><span class="math inline">\(k\)</span>th-fold CV concordance</strong>: <span class="math inline">\(C^{(k)}(\lambda) = \mathcal C\left(\Sk;\wh\beta^{(-k)}(\lambda)\right)\)</span></li>
+<li><span class="math inline">\(k\)</span>th-fold CV concordance: <span class="math inline">\(C^{(k)}(\lambda) = \mathcal C\left(\Sk;\wh\beta^{(-k)}(\lambda)\right)\)</span></li>
 <li><strong>Optimal</strong> <span class="math inline">\(\lambda_{\rm opt} = \arg\max_\lambda K^{-1}\sum_{k=1}^K\C^{(k)}(\lambda)\)</span></li>
 <li><strong>Final model</strong>: <span class="math inline">\(\wh\beta(\lambda_{\rm opt})\)</span></li>
 </ul></li>
@@ -553,10 +517,9 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section id="workflow---input-data" class="slide level2">
 <h2>Workflow - Input Data</h2>
 <ul>
-<li><strong>Data format</strong>
+<li><p><strong>Data format</strong></p>
 <ul>
 <li>Long format with columns: <code>id</code>, <code>time</code>, <code>status</code>, and covariates</li>
-</ul></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># Load package containing data</span></span>
@@ -570,7 +533,8 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <span id="cb2-9"><a></a><span class="co">#&gt;4   2 65.770492      0       1  52         1   20     1  </span></span>
 <span id="cb2-10"><a></a><span class="co">#&gt;5   3 41.934426      2       1  47         1   30     2   </span></span>
 <span id="cb2-11"><a></a><span class="co">#&gt;...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+</div></li>
+</ul>
 </section>
 <section id="workflow---data-partitioning" class="slide level2">
 <h2>Workflow - Data Partitioning</h2>
@@ -592,7 +556,7 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section id="workflow---cross-validation-i" class="slide level2">
 <h2>Workflow - Cross-Validation (I)</h2>
 <ul>
-<li><strong><span class="math inline">\(k\)</span>-fold CV</strong>
+<li><span class="math inline">\(k\)</span>-fold CV
 <ul>
 <li><code>cv_wrnet(id, time, status, Z, k = 10, ...)</code></li>
 </ul></li>
@@ -626,10 +590,9 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section id="workflow---final-model" class="slide level2">
 <h2>Workflow - Final Model</h2>
 <ul>
-<li><strong>Fit final model</strong>
+<li><p><strong>Fit final model</strong></p>
 <ul>
 <li><code>wrnet(id, time, status, Z, lambda = lambda_opt, ...)</code></li>
-</ul></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Final model ------------------------------------------</span></span>
@@ -645,7 +608,8 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <span id="cb5-11"><a></a><span class="co">#&gt; nodes      -0.082227827</span></span>
 <span id="cb5-12"><a></a><span class="co">#&gt; prog_recp   0.001861367</span></span>
 <span id="cb5-13"><a></a><span class="co">#&gt; estrg_recp  .     </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+</div></li>
+</ul>
 </section>
 <section id="workflow---variable-importance" class="slide level2">
 <h2>Workflow - Variable Importance</h2>
@@ -685,70 +649,193 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section>
 <section id="simulations" class="title-slide slide level1 center">
 <h1>Simulations</h1>
-<!-- ## Setup -->
-<!-- -   **Covariates**: $z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T$ -->
-<!--     -   $z_{\cdot k} \sim N(0,1)$---AR(1) with $\rho = 0.1$ -->
-<!-- -   **Outcome model**: $$ -->
-<!--       \pr(D > s, T > t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)  -->
-<!--     $$ -->
-<!--     -   $\lambda_D = 0.1$, $\lambda_H = 1$, $\kappa = 1.25$ -->
-<!-- -   **Censoring**: $\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)$ -->
-<!--     -   $\lambda_C = 0.02$ -->
-<!-- ## Two Effect Patterns -->
-<!-- -   **Scenarios** -->
-<!--     1.  Same effect pattern on components $$ -->
-<!--         \beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10}, -->
-<!--         \underbrace{0,\ldots, 0}_{p - 10}). -->
-<!--         $$ -->
-<!--     2.  Different effect patterns on components \begin{align*} -->
-<!--            \beta_D&=(\underbrace{0.75,\ldots, 0.75}_{5}, -->
-<!--         \underbrace{0,\ldots, 0}_{p - 5});\\ -->
-<!--            \beta_H&=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10}) -->
-<!--         \end{align*} -->
-<!-- ## Performance: Sensitivity and Specificity -->
-<!-- -   Compare variable selection accuracy between WR and Cox -->
-<!-- -   WR consistently better in identifying true features -->
-<!-- -   Especially better in **Scenario 2** when component effects differ -->
-<!-- ## Predictive accuracy (C-index) -->
-<!-- ![](figs/fig_cind.png){fig-align="center" width="55%"} -->
-<!-- -   In Scenario 2, WR has better prognostic performance for death and overall -->
-<!-- # HF-ACTION application -->
-<!-- ## Dataset and setup -->
-<!-- -   Subset: $n=426$ high-risk patients (CPX duration $\leq 9$ min) -->
-<!-- -   Outcomes: death \> hospitalization -->
-<!-- -   $p=153$ baseline features -->
-<!-- -   Train-test split: 80%/20% -->
-<!-- ## Cross-validation comparison -->
-<!-- ![](figs/fig_cv_errors.png){fig-align="center" width="80%"} -->
-<!-- -   Naive CV on pairs leads to overfitting -->
-<!-- -   Subject-level CV identifies optimal $\lambda$ properly -->
-<!-- ## Test performance -->
-<!-- ![](fig_preds.eps){fig-align="center" width="90%"} -->
-<!-- -   WR model better stratifies high-risk patients -->
-<!-- -   Outperforms Cox in predicting deaths -->
-<!-- ## Variable importance -->
-<!-- ![](fig_vip.eps){fig-align="center" width="90%"} -->
-<!-- -   WR model selects 20 interpretable variables -->
-<!-- -   Top predictors include sex, valve surgery, CPX metrics -->
-<!-- # Summary and discussion -->
-<!-- ## Summary -->
-<!-- -   Developed elastic net-regularized WR regression -->
-<!-- -   Better aligns with clinical priorities than Cox -->
-<!-- -   Accurate feature selection and prediction -->
-<!-- ## Tools -->
-<!-- -   R package [`wrnet`](https://lmaowisc.github.io/wrnet/) -->
-<!-- -   Efficient implementation with `glmnet()` backend -->
-<!-- -   Supports CV, test evaluation, and variable importance -->
-<!-- ## Future directions -->
-<!-- -   Explore $\alpha \in (0,1)$ settings -->
-<!-- -   Extend to time-varying effects and nonlinearities -->
-<!-- -   Combine with restricted estimands for precision -->
+
+</section>
+<section id="setup" class="slide level2">
+<h2>Setup</h2>
+<ul>
+<li><strong>Covariates</strong>: <span class="math inline">\(z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T\)</span>
+<ul>
+<li><span class="math inline">\(z_{\cdot k} \sim N(0,1)\)</span>—AR(1) with <span class="math inline">\(\rho = 0.1\)</span></li>
+</ul></li>
+<li><strong>Outcome model</strong>: <span class="math display">\[
+  \pr(D &gt; s, T &gt; t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)
+\]</span>
+<ul>
+<li><span class="math inline">\(\lambda_D = 0.1\)</span>, <span class="math inline">\(\lambda_H = 1\)</span>, <span class="math inline">\(\kappa = 1.25\)</span></li>
+</ul></li>
+<li><strong>Censoring</strong>: <span class="math inline">\(\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)\)</span>
+<ul>
+<li><span class="math inline">\(\lambda_C = 0.02\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="two-effect-patterns" class="slide level2">
+<h2>Two Effect Patterns</h2>
+<ul>
+<li><strong>Scenarios</strong>
+<ol type="1">
+<li>Same effect pattern on components <span class="math display">\[
+\beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10},
+\underbrace{0,\ldots, 0}_{p - 10}).
+\]</span></li>
+<li>Different effect patterns on components <span class="math display">\[\begin{align*}
+   \beta_D&amp;=(\underbrace{0.75,\ldots, 0.75}_{5},
+\underbrace{0,\ldots, 0}_{p - 5});\\
+   \beta_H&amp;=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10})
+\end{align*}\]</span></li>
+</ol></li>
+</ul>
+</section>
+<section id="predictive-accuracy---c-index" class="slide level2">
+<h2>Predictive Accuracy - C-index</h2>
+<ul>
+<li><strong>Regularized WR vs regularized Cox on first event</strong>
+<ul>
+<li>80% training + 20% testing</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/pres_simu.png" class="quarto-figure quarto-figure-center" style="width:55.0%"></p>
+</figure>
+</div>
+</section>
+<section id="variable-selection---sensitivity" class="slide level2">
+<h2>Variable Selection - Sensitivity</h2>
+<ul>
+<li><strong>S2: <span class="math inline">\(z_{\cdot 1}\)</span>–<span class="math inline">\(z_{\cdot 5}\)</span> <span class="math inline">\(\longrightarrow\)</span> mortality</strong></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/pres_sens.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</section>
+<section id="variable-selection---specifity" class="slide level2">
+<h2>Variable Selection - Specifity</h2>
+<ul>
+<li><strong><span class="math inline">\(z_{\cdot 11}\)</span>–<span class="math inline">\(z_{\cdot 20}\)</span> <span class="math inline">\(\longrightarrow\)</span> no effect</strong></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/pres_spec.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</section></section>
+<section>
+<section id="hf-action-application" class="title-slide slide level1 center">
+<h1>HF-ACTION Application</h1>
+
+</section>
+<section id="study-information" class="slide level2">
+<h2>Study Information</h2>
+<ul>
+<li><strong>HF-ACTION</strong> <span class="citation" data-cites="oconner:2009">(<a href="#/references" role="doc-biblioref" onclick="">O’Connor et al., 2009</a>)</span>
+<ul>
+<li><strong>Population</strong>: 2,331 HFrEF patients across North America and France</li>
+<li><strong>Objective</strong>: Evaluate the effect of exercise training on composite of death and hospitalization</li>
+</ul></li>
+<li><strong>Subgroup of high-risk patients</strong>
+<ul>
+<li><span class="math inline">\(n=426\)</span> high-risk patients (CPX duration <span class="math inline">\(\leq 9\)</span> min)</li>
+<li>Outcomes: death &gt; hospitalization</li>
+<li><span class="math inline">\(p=153\)</span> baseline features</li>
+<li>Train-test split: 80%/20%</li>
+</ul></li>
+</ul>
+</section>
+<section id="cross-validation-1" class="slide level2">
+<h2>Cross-Validation</h2>
+<ul>
+<li>Naive pairwise logistic CV on pairs leads to overfitting</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/fig_cv_errors.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</section>
+<section id="test-performance---risk-scores" class="slide level2">
+<h2>Test Performance - Risk Scores</h2>
+<ul>
+<li><strong>WRNet vs regularized Cox</strong>
+<ul>
+<li>WRNet better stratifies high-risk patients, especially on mortality</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/fig_preds.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
+</figure>
+</div>
+</section>
+<section id="test-performance---c-index" class="slide level2">
+<h2>Test Performance - C-Index</h2>
+<ul>
+<li><strong>WRNet vs regularized Cox</strong>
+<ul>
+<li>WRNet outperforms Cox on overall and event-specific C-indices</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/pres_hf_cind.png" class="quarto-figure quarto-figure-center" style="width:30.0%"></p>
+</figure>
+</div>
+</section>
+<section id="variable-importance" class="slide level2">
+<h2>Variable Importance</h2>
+<ul>
+<li>WRNet selects 20 interpretable variables <img data-src="figs/fig_vip.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></li>
+</ul>
+</section>
+<section id="final-wr-model" class="slide level2">
+<h2>Final WR Model</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figs/pres_hf_reg.png" class="quarto-figure quarto-figure-center" style="width:55.0%"></p>
+</figure>
+</div>
+</section></section>
+<section>
+<section id="summary-and-discussion" class="title-slide slide level1 center">
+<h1>Summary and Discussion</h1>
+
+</section>
+<section id="summary" class="slide level2">
+<h2>Summary</h2>
+<ul>
+<li><strong>Methodology</strong>
+<ul>
+<li>Developed elastic net-regularized WR regression</li>
+<li>Better aligns with clinical priorities than Cox</li>
+<li>Accurate feature selection and prediction</li>
+</ul></li>
+<li><strong>Tools</strong>
+<ul>
+<li><code>wrnet</code>: <a href="https://lmaowisc.github.io/wrnet/">https://lmaowisc.github.io/wrnet/</a></li>
+<li>Efficient implementation with <code>glmnet()</code> backend</li>
+<li>Supports CV, test evaluation, and variable importance</li>
+</ul></li>
+</ul>
+</section>
+<section id="future-topics" class="slide level2">
+<h2>Future Topics</h2>
+<ul>
+<li>Explore <span class="math inline">\(\alpha \in (0,1)\)</span> settings</li>
+<li>Extend to time-varying effects and nonlinearities</li>
+<li>Decision trees</li>
+</ul>
 </section>
 <section id="references" class="slide level2 smaller scrollable">
 <h2>References</h2>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-buyse:2010" class="csl-entry" role="listitem">
 Buyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in the two-sample problem. <em>Statistics in Medicine</em>, <em>29</em>, 3245–3257.
+</div>
+<div id="ref-cheung:2019" class="csl-entry" role="listitem">
+Cheung, L. C., Pan, Q., Hyun, N., &amp; Katki, H. A. (2019). Prioritized concordance index for hierarchical survival outcomes. <em>Statistics in Medicine</em>, <em>38</em>(15), 2868–2882.
 </div>
 <div id="ref-friedman:2010" class="csl-entry" role="listitem">
 Friedman, J., Hastie, T., &amp; Tibshirani, R. (2010). Regularization paths for generalized linear models via coordinate descent. <em>Journal of Statistical Software</em>, <em>33</em>(1), 1.
@@ -759,11 +846,17 @@ Harrell, F. E., Califf, R. M., Pryor, D. B., Lee, K. L., &amp; Rosati, R. A. (19
 <div id="ref-mao2021" class="csl-entry" role="listitem">
 Mao, L., &amp; Wang, T. (2021). A class of proportional win-fractions regression models for composite outcomes. <em>Biometrics</em>, <em>77</em>(4), 1265–1275.
 </div>
+<div id="ref-oconner:2009" class="csl-entry" role="listitem">
+O’Connor, C. M., Whellan, D. J., Lee, K. L., Keteyian, S. J., Cooper, L. S., Ellis, S. J., Leifer, E. S., Kraus, W. E., Kitzman, D. W., Blumenthal, J. A., et al. (2009). Efficacy and safety of exercise training in patients with chronic heart failure: HF-ACTION randomized controlled trial. <em>Journal of the American Medical Association</em>, <em>301</em>(14), 1439–1450.
+</div>
 <div id="ref-oakes:2016" class="csl-entry" role="listitem">
 Oakes, D. (2016). On the win-ratio statistic in clinical trials with multiple types of event. <em>Biometrika</em>, <em>103</em>(1), 742–745.
 </div>
 <div id="ref-pocock2012" class="csl-entry" role="listitem">
 Pocock, S., Ariti, C., Collier, T., &amp; Wang, D. (2012). The win ratio: A new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. <em>European Heart Journal</em>, <em>33</em>(2), 176–112.
+</div>
+<div id="ref-uno:2011" class="csl-entry" role="listitem">
+Uno, H., Cai, T., Pencina, M. J., D’Agostino, R. B., &amp; Wei, L.-J. (2011). On the c-statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. <em>Statistics in Medicine</em>, <em>30</em>(10), 1105–1117.
 </div>
 <div id="ref-zou:2005" class="csl-entry" role="listitem">
 Zou, H., &amp; Hastie, T. (2005). Regularization and variable selection via the elastic net. <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em>, <em>67</em>(2), 301–320.

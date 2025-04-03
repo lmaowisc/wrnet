@@ -46,7 +46,7 @@
     "href": "presentation.html#hierarchical-composite-endpoints",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Hierarchical Composite Endpoints",
-    "text": "Hierarchical Composite Endpoints\n\n\nComposite outcomes\n\nComponents: Death, hospitalization, other events\nStandard approach: Time to first event (e.g., Cox model)\n\n\n\n\n\nWin ratio (WR) (Pocock et al., 2012)\n\nPairwise comparisons: Treatment vs control (Buyse, 2010)\nEach pair: Death &gt; hospitalization (&gt; other events)\nEffect size \\[\n\\text{WR} = \\frac{\\text{Number of wins}}{\\text{Number of losses}}\n\\]"
+    "text": "Hierarchical Composite Endpoints\n\nComposite outcomes\n\nComponents: Death, hospitalization, other events\nStandard approach: Time to first event (e.g., Cox model)\n\nWin ratio (WR) (Pocock et al., 2012)\n\nPairwise comparisons: Treatment vs control (Buyse, 2010)\nEach pair: Death &gt; hospitalization (&gt; other events)\nEffect size \\[\n\\text{WR} = \\frac{\\text{Number of wins}}{\\text{Number of losses}}\n\\]"
   },
   {
     "objectID": "presentation.html#limitations-of-current-models",
@@ -74,7 +74,7 @@
     "href": "presentation.html#estimation",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Estimation",
-    "text": "Estimation\n\n\nEstimator: solving \\[\nU_n(\\hat\\beta) \\;\\;= 0\n\\]\n\nStandard Newton–Raphson algorithm\n\n\n\n\n\nConnection with logistic regression\n\n\\(U_n(\\hat\\beta)\\) equivalent to logistic score function (no intercept)\nEach comparable \\((i, j)\\) pair as an observation\n\n\\(\\delta_{ij}\\): binary response\n\\(z_{ij}\\): covariates"
+    "text": "Estimation\n\nEstimator: solving \\[\nU_n(\\hat\\beta) \\;\\;= 0\n\\]\n\nStandard Newton–Raphson algorithm\n\nConnection with logistic regression\n\n\\(U_n(\\hat\\beta)\\) equivalent to logistic score function (no intercept)\nEach comparable \\((i, j)\\) pair as an observation\n\n\\(\\delta_{ij}\\): binary response\n\\(z_{ij}\\): covariates"
   },
   {
     "objectID": "presentation.html#objective-function",
@@ -102,7 +102,7 @@
     "href": "presentation.html#generalized-concordance-index",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Generalized Concordance Index",
-    "text": "Generalized Concordance Index\n\nValidatio/test set \\(\\mathcal S^*\\)\n\nPairwise indices \\[\n\\mathcal R^* = \\{(i,j): \\delta_{ij}+\\delta_{ji}\\neq 0; i&lt;j; i,j\\in\\S^*\\}\n\\]\n\nConcordance (Harrell et al., 1982)\n\nProportion of correct ranking of pairs \\[\\begin{equation}\\label{eq:c_index}\n\\mathcal C(\\S^*;\\beta) = |\\mathcal R^*|^{-1}\\sum_{(i, j)\\in\\mathcal R^*}\n\\bigl[\\underbrace{I\\{(2\\delta_{ij} -1)(\\beta^\\T z_i - \\beta^\\T z_j)&gt;0\\}}_{\\text{Concordant pair}}+2^{-1}\n\\underbrace{I(\\beta^\\T z_i = \\beta^\\T z_j)}_{\\text{Tied score}}\\bigr]\n\\end{equation}\\]"
+    "text": "Generalized Concordance Index\n\nValidatio/test set \\(\\mathcal S^*\\)\n\nPairwise indices \\[\n\\mathcal R^* = \\{(i,j): \\delta_{ij}+\\delta_{ji}\\neq 0; i&lt;j; i,j\\in\\S^*\\}\n\\]\n\nConcordance (Cheung et al., 2019; Harrell et al., 1982; Uno et al., 2011)\n\nProportion of correct ranking of pairs \\[\\begin{equation}\\label{eq:c_index}\n\\mathcal C(\\S^*;\\beta) = |\\mathcal R^*|^{-1}\\sum_{(i, j)\\in\\mathcal R^*}\n\\bigl[\\underbrace{I\\{(2\\delta_{ij} -1)(\\beta^\\T z_i - \\beta^\\T z_j)&gt;0\\}}_{\\text{Concordant pair}}+2^{-1}\n\\underbrace{I(\\beta^\\T z_i = \\beta^\\T z_j)}_{\\text{Tied score}}\\bigr]\n\\end{equation}\\]"
   },
   {
     "objectID": "presentation.html#setup",
@@ -122,8 +122,8 @@
     "objectID": "presentation.html#predictive-accuracy-c-index",
     "href": "presentation.html#predictive-accuracy-c-index",
     "title": "WRNet: Regularized win ratio regression",
-    "section": "Predictive accuracy (C-index)",
-    "text": "Predictive accuracy (C-index)\n\n\n\n\n\n\nIn Scenario 2, WR has better prognostic performance for death and overall"
+    "section": "Predictive Accuracy (C-index)",
+    "text": "Predictive Accuracy (C-index)\n\nRegularized WR vs regularized Cox on first event\n\n80% training + 20% testing"
   },
   {
     "objectID": "presentation.html#dataset-and-setup",
@@ -144,21 +144,21 @@
     "href": "presentation.html#test-performance",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Test performance",
-    "text": "Test performance\n\n\n\n\n\n\nWR model better stratifies high-risk patients\nOutperforms Cox in predicting deaths"
+    "text": "Test performance\n\nWRNet vs Cox\n\nWR better stratifies high-risk patients, especially on mortality"
   },
   {
     "objectID": "presentation.html#variable-importance",
     "href": "presentation.html#variable-importance",
     "title": "WRNet: Regularized win ratio regression",
-    "section": "Variable importance",
-    "text": "Variable importance\n\n\n\n\n\n\nWR model selects 20 interpretable variables\nTop predictors include sex, valve surgery, CPX metrics"
+    "section": "Variable Importance",
+    "text": "Variable Importance\n\nWRNet selects 20 interpretable variables"
   },
   {
     "objectID": "presentation.html#summary",
     "href": "presentation.html#summary",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Summary",
-    "text": "Summary\n\nDeveloped elastic net-regularized WR regression\nBetter aligns with clinical priorities than Cox\nAccurate feature selection and prediction"
+    "text": "Summary\n\nMethodology\n\nDeveloped elastic net-regularized WR regression\nBetter aligns with clinical priorities than Cox\nAccurate feature selection and prediction\n\nTools\n\nwrnet: https://lmaowisc.github.io/wrnet/\nEfficient implementation with glmnet() backend\nSupports CV, test evaluation, and variable importance"
   },
   {
     "objectID": "presentation.html#tools",
@@ -172,28 +172,28 @@
     "href": "presentation.html#future-directions",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Future directions",
-    "text": "Future directions\n\nExplore \\(\\alpha \\in (0,1)\\) settings\nExtend to time-varying effects and nonlinearities\nCombine with restricted estimands for precision"
+    "text": "Future directions\n\nExplore \\(\\alpha \\in (0,1)\\) settings\nExtend to time-varying effects and nonlinearities\nDecision trees"
   },
   {
     "objectID": "presentation.html#data-and-notation",
     "href": "presentation.html#data-and-notation",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Data and Notation",
-    "text": "Data and Notation\n\n\nOutcomes data (subject \\(i\\))\n\n\\(D_i\\): time to death\n\\(T_i\\): time to first nonfatal event\n\\(\\bs Y_i(t) =(D_i\\wedge t, T_i\\wedge t)\\): cumulative data at \\(t\\)\n\n\\(x\\wedge y = \\min(x, y)\\)\n\n\n\n\n\n\nWin indicator \\[\\begin{align*}\\label{eq:win2tier}\n\\W(\\bs Y_i, \\bs Y_j)(t) = \\underbrace{I(D_j&lt; D_i\\wedge t)}_{\\mbox{Win on survival}}\n+ \\underbrace{I(D_i\\wedge D_j &gt;t,\\; T_j&lt; T_i\\wedge t)}_\n{\\mbox{Tie on survival, win on nonfatal event}}\n\\end{align*}\\]"
+    "text": "Data and Notation\n\nOutcomes data (subject \\(i\\))\n\n\\(D_i\\): time to death\n\\(T_i\\): time to first nonfatal event\n\\(\\bs Y_i(t) =(D_i\\wedge t, T_i\\wedge t)\\): cumulative data at \\(t\\)\n\n\\(x\\wedge y = \\min(x, y)\\)\n\n\nWin indicator \\[\\begin{align*}\\label{eq:win2tier}\n\\W(\\bs Y_i, \\bs Y_j)(t) = \\underbrace{I(D_j&lt; D_i\\wedge t)}_{\\mbox{Win on survival}}\n+ \\underbrace{I(D_i\\wedge D_j &gt;t,\\; T_j&lt; T_i\\wedge t)}_\n{\\mbox{Tie on survival, win on nonfatal event}}\n\\end{align*}\\]"
   },
   {
     "objectID": "presentation.html#win-ratio-regression",
     "href": "presentation.html#win-ratio-regression",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Win Ratio Regression",
-    "text": "Win Ratio Regression\n\n\nSemiparametric regression \\[\\begin{equation}\\label{eq:pw}\n\\frac{\\pr\\{\\W(\\bs Y_i, \\bs Y_j)(t) = 1\\mid z_i, z_j\\}}{\\pr\\{\\W(\\bs Y_j, \\bs Y_i)(t) = 1\\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\T(z_i - z_j)\\right\\}\n\\end{equation}\\]\n\n\\(z\\): \\(p\\)-dimensional covariates\nProportional win-fractions (PW) model\n\nEquivalent to Cox PH model in univariate case (Oakes, 2016)—WR = 1/HR\n\n\\(\\exp(\\beta)\\): win ratios associated with unit increases in \\(z\\)\n\n\n\n\n\nLimitation: \\(p&lt;&lt; n\\)"
+    "text": "Win Ratio Regression\n\nSemiparametric regression \\[\\begin{equation}\\label{eq:pw}\n\\frac{\\pr\\{\\W(\\bs Y_i, \\bs Y_j)(t) = 1\\mid z_i, z_j\\}}{\\pr\\{\\W(\\bs Y_j, \\bs Y_i)(t) = 1\\mid z_j, z_i\\}} = \\exp\\left\\{\\beta^\\T(z_i - z_j)\\right\\}\n\\end{equation}\\]\n\n\\(z\\): \\(p\\)-dimensional covariates\nProportional win-fractions (PW) model\n\nEquivalent to Cox PH model in univariate case (Oakes, 2016)—WR = 1/HR\n\n\\(\\exp(\\beta)\\): win ratios associated with unit increases in \\(z\\)\n\nLimitation: \\(p&lt;&lt; n\\)"
   },
   {
     "objectID": "presentation.html#goals",
     "href": "presentation.html#goals",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Goals",
-    "text": "Goals\n\n\nObjectives:\n\nAutomate variable selection in WR regression\n\nEnhance prediction accuracy and model parsimony\n\n\n\n\n\nApproach:\n\nApply elastic net regularization to PW model\n\nMixture of \\(L_1\\) (lasso) and \\(L_2\\) (ridge) penalties\n\n\nImplemented in wrnet R package"
+    "text": "Goals\n\nObjectives:\n\nAutomate variable selection in WR regression\n\nEnhance prediction accuracy and model parsimony\n\nApproach:\n\nApply elastic net regularization to PW model\n\nMixture of \\(L_1\\) (lasso) and \\(L_2\\) (ridge) penalties\n\n\nImplemented in wrnet R package"
   },
   {
     "objectID": "presentation.html#standard-regression-method",
@@ -214,7 +214,7 @@
     "href": "presentation.html#standard-model-fitting",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Standard Model-Fitting",
-    "text": "Standard Model-Fitting\n\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\n\n\n\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\delta_{ij} + \\delta_{ji} &gt; 0\\}\\): set of comparable pairs"
+    "text": "Standard Model-Fitting\n\nObserved data\n\n\\(\\bs Y_i(X_i)\\): outcomes data up to \\(X_i = D_i \\wedge C_i\\) (\\(C_i\\): censoring time)\n\nEstimating equation (Mao & Wang, 2021) \\[\\begin{equation}\nU_n(\\beta) = |\\mathcal R|^{-1} \\sum_{(i, j)\\in \\mathcal R}\nz_{ij} \\left\\{ \\delta_{ij} - \\frac{\\exp(\\beta^\\top z_{ij})}{1 + \\exp(\\beta^\\top z_{ij})} \\right\\}\n\\end{equation}\\]\n\n\\(z_{ij} = z_i - z_j\\): covariate difference\n\n\\(\\delta_{ij} = \\mathcal{W}(\\bs Y_i, \\bs Y_j)(X_i \\wedge X_j)\\): observed win indicator\n\\(\\mathcal{R}=\\{(i, j): \\delta_{ij} + \\delta_{ji} &gt; 0\\}\\): set of comparable pairs"
   },
   {
     "objectID": "presentation.html#regularized-pw-model",
@@ -228,7 +228,7 @@
     "href": "presentation.html#references",
     "title": "WRNet: Regularized win ratio regression",
     "section": "References",
-    "text": "References\n\n\nBuyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in the two-sample problem. Statistics in Medicine, 29, 3245–3257.\n\n\nFriedman, J., Hastie, T., & Tibshirani, R. (2010). Regularization paths for generalized linear models via coordinate descent. Journal of Statistical Software, 33(1), 1.\n\n\nHarrell, F. E., Califf, R. M., Pryor, D. B., Lee, K. L., & Rosati, R. A. (1982). Evaluating the yield of medical tests. JAMA, 247(18), 2543–2546.\n\n\nMao, L., & Wang, T. (2021). A class of proportional win-fractions regression models for composite outcomes. Biometrics, 77(4), 1265–1275.\n\n\nOakes, D. (2016). On the win-ratio statistic in clinical trials with multiple types of event. Biometrika, 103(1), 742–745.\n\n\nPocock, S., Ariti, C., Collier, T., & Wang, D. (2012). The win ratio: A new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. European Heart Journal, 33(2), 176–112.\n\n\nZou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society Series B: Statistical Methodology, 67(2), 301–320."
+    "text": "References\n\n\nBuyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in the two-sample problem. Statistics in Medicine, 29, 3245–3257.\n\n\nCheung, L. C., Pan, Q., Hyun, N., & Katki, H. A. (2019). Prioritized concordance index for hierarchical survival outcomes. Statistics in Medicine, 38(15), 2868–2882.\n\n\nFriedman, J., Hastie, T., & Tibshirani, R. (2010). Regularization paths for generalized linear models via coordinate descent. Journal of Statistical Software, 33(1), 1.\n\n\nHarrell, F. E., Califf, R. M., Pryor, D. B., Lee, K. L., & Rosati, R. A. (1982). Evaluating the yield of medical tests. JAMA, 247(18), 2543–2546.\n\n\nMao, L., & Wang, T. (2021). A class of proportional win-fractions regression models for composite outcomes. Biometrics, 77(4), 1265–1275.\n\n\nO’Connor, C. M., Whellan, D. J., Lee, K. L., Keteyian, S. J., Cooper, L. S., Ellis, S. J., Leifer, E. S., Kraus, W. E., Kitzman, D. W., Blumenthal, J. A., et al. (2009). Efficacy and safety of exercise training in patients with chronic heart failure: HF-ACTION randomized controlled trial. Journal of the American Medical Association, 301(14), 1439–1450.\n\n\nOakes, D. (2016). On the win-ratio statistic in clinical trials with multiple types of event. Biometrika, 103(1), 742–745.\n\n\nPocock, S., Ariti, C., Collier, T., & Wang, D. (2012). The win ratio: A new approach to the analysis of composite endpoints in clinical trials based on clinical priorities. European Heart Journal, 33(2), 176–112.\n\n\nUno, H., Cai, T., Pencina, M. J., D’Agostino, R. B., & Wei, L.-J. (2011). On the c-statistics for evaluating overall adequacy of risk prediction procedures with censored survival data. Statistics in Medicine, 30(10), 1105–1117.\n\n\nZou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society Series B: Statistical Methodology, 67(2), 301–320."
   },
   {
     "objectID": "presentation.html#pathwise-solution",
@@ -277,7 +277,7 @@
     "href": "presentation.html#workflow---input-data",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Workflow - Input Data",
-    "text": "Workflow - Input Data\n\nData format\n\nLong format with columns: id, time, status, and covariates\n\n\n\n# Load package containing data\nlibrary(WR)\ndf &lt;- gbc # n = 686 subjects, p = 9 covariates\ndf # status = 0 (censored), 1 (death), 2 (recurrence)\n#&gt;   id      time status hormone age menopause size grade ...\n#&gt;1   1 43.836066      2       1  38         1   18     3  \n#&gt;2   1 74.819672      0       1  38         1   18     3  \n#&gt;3   2 46.557377      2       1  52         1   20     1   \n#&gt;4   2 65.770492      0       1  52         1   20     1  \n#&gt;5   3 41.934426      2       1  47         1   30     2   \n#&gt;..."
+    "text": "Workflow - Input Data\n\nData format\n\nLong format with columns: id, time, status, and covariates\n\n\n# Load package containing data\nlibrary(WR)\ndf &lt;- gbc # n = 686 subjects, p = 9 covariates\ndf # status = 0 (censored), 1 (death), 2 (recurrence)\n#&gt;   id      time status hormone age menopause size grade ...\n#&gt;1   1 43.836066      2       1  38         1   18     3  \n#&gt;2   1 74.819672      0       1  38         1   18     3  \n#&gt;3   2 46.557377      2       1  52         1   20     1   \n#&gt;4   2 65.770492      0       1  52         1   20     1  \n#&gt;5   3 41.934426      2       1  47         1   30     2   \n#&gt;..."
   },
   {
     "objectID": "presentation.html#workflow---cross-validation",
@@ -312,7 +312,7 @@
     "href": "presentation.html#workflow---final-model",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Workflow - Final Model",
-    "text": "Workflow - Final Model\n\nFit final model\n\nwrnet(id, time, status, Z, lambda = lambda_opt, ...)\n\n\n\n# Final model ------------------------------------------\nfinal_fit &lt;- wrnet(df_train$id, df_train$time, df_train$status, \n          df_train |&gt; select(-c(id, time, status)), lambda = lambda_opt)\nfinal_fit$beta # Estimated coefficients\n#&gt;                      s0\n#&gt; hormone     0.306026364\n#&gt; age         0.003111462\n#&gt; menopause   .          \n#&gt; size       -0.007720497\n#&gt; grade      -0.285511701\n#&gt; nodes      -0.082227827\n#&gt; prog_recp   0.001861367\n#&gt; estrg_recp  ."
+    "text": "Workflow - Final Model\n\nFit final model\n\nwrnet(id, time, status, Z, lambda = lambda_opt, ...)\n\n\n# Final model ------------------------------------------\nfinal_fit &lt;- wrnet(df_train$id, df_train$time, df_train$status, \n          df_train |&gt; select(-c(id, time, status)), lambda = lambda_opt)\nfinal_fit$beta # Estimated coefficients\n#&gt;                      s0\n#&gt; hormone     0.306026364\n#&gt; age         0.003111462\n#&gt; menopause   .          \n#&gt; size       -0.007720497\n#&gt; grade      -0.285511701\n#&gt; nodes      -0.082227827\n#&gt; prog_recp   0.001861367\n#&gt; estrg_recp  ."
   },
   {
     "objectID": "presentation.html#workflow---variable-importance",
@@ -348,5 +348,68 @@
     "title": "WRNet: Regularized win ratio regression",
     "section": "Two Effect Patterns",
     "text": "Two Effect Patterns\n\nScenarios\n\nSame effect pattern on components \\[\n\\beta_D=\\beta_H=(\\underbrace{0.5,\\ldots, 0.5}_{10},\n\\underbrace{0,\\ldots, 0}_{p - 10}).\n\\]\nDifferent effect patterns on components \\[\\begin{align*}\n   \\beta_D&=(\\underbrace{0.75,\\ldots, 0.75}_{5},\n\\underbrace{0,\\ldots, 0}_{p - 5});\\\\\n   \\beta_H&=(\\underbrace{0,\\ldots, 0}_{5}, \\underbrace{0.75,\\ldots, 0.75}_{5}, \\underbrace{0,\\ldots, 0}_{p - 10})\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "presentation.html#predictive-accuracy---c-index",
+    "href": "presentation.html#predictive-accuracy---c-index",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Predictive Accuracy - C-index",
+    "text": "Predictive Accuracy - C-index\n\nRegularized WR vs regularized Cox on first event\n\n80% training + 20% testing"
+  },
+  {
+    "objectID": "presentation.html#variable-selection---sensitivity",
+    "href": "presentation.html#variable-selection---sensitivity",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Variable Selection - Sensitivity",
+    "text": "Variable Selection - Sensitivity\n\nS2: \\(z_{\\cdot 1}\\)–\\(z_{\\cdot 5}\\) \\(\\longrightarrow\\) mortality"
+  },
+  {
+    "objectID": "presentation.html#variable-selection---specifity",
+    "href": "presentation.html#variable-selection---specifity",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Variable Selection - Specifity",
+    "text": "Variable Selection - Specifity\n\n\\(z_{\\cdot 11}\\)–\\(z_{\\cdot 20}\\) \\(\\longrightarrow\\) no effect"
+  },
+  {
+    "objectID": "presentation.html#study-information",
+    "href": "presentation.html#study-information",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Study Information",
+    "text": "Study Information\n\nHF-ACTION (O’Connor et al., 2009)\n\nPopulation: 2,331 HFrEF patients across North America and France\nObjective: Evaluate the effect of exercise training on composite of death and hospitalization\n\nSubgroup of high-risk patients\n\n\\(n=426\\) high-risk patients (CPX duration \\(\\leq 9\\) min)\nOutcomes: death &gt; hospitalization\n\\(p=153\\) baseline features\nTrain-test split: 80%/20%"
+  },
+  {
+    "objectID": "presentation.html#cross-validation-1",
+    "href": "presentation.html#cross-validation-1",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Cross-Validation",
+    "text": "Cross-Validation\n\nNaive pairwise logistic CV on pairs leads to overfitting"
+  },
+  {
+    "objectID": "presentation.html#test-performance---risk-scores",
+    "href": "presentation.html#test-performance---risk-scores",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Test Performance - Risk Scores",
+    "text": "Test Performance - Risk Scores\n\nWRNet vs regularized Cox\n\nWRNet better stratifies high-risk patients, especially on mortality"
+  },
+  {
+    "objectID": "presentation.html#test-performance---c-index",
+    "href": "presentation.html#test-performance---c-index",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Test Performance - C-Index",
+    "text": "Test Performance - C-Index\n\nWRNet vs regularized Cox\n\nWRNet outperforms Cox on overall and event-specific C-indices"
+  },
+  {
+    "objectID": "presentation.html#final-wr-model",
+    "href": "presentation.html#final-wr-model",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Final WR Model",
+    "text": "Final WR Model"
+  },
+  {
+    "objectID": "presentation.html#future-topics",
+    "href": "presentation.html#future-topics",
+    "title": "WRNet: Regularized win ratio regression",
+    "section": "Future Topics",
+    "text": "Future Topics\n\nExplore \\(\\alpha \\in (0,1)\\) settings\nExtend to time-varying effects and nonlinearities\nDecision trees"
   }
 ]

@@ -23,9 +23,9 @@ include-in-header:
       </style>
 bibliography: regul_wr.bib
 title-slide-attributes: 
-  data-background-image: jsm_logo1.png
-  data-background-size: 18%
-  data-background-position: 50% 2%
+  data-background-image: figs/OSU-PublicHealth-Horiz-RGBHEX.png
+  data-background-size: 38%
+  data-background-position: 5% 5%
 execute:
   eval: false
   echo: true
@@ -52,7 +52,6 @@ $$
 \def\Un{\sum_{i=1}^{n-1}\sum_{j=i+1}^n}
 $$
 
-
 ## Outline
 
 -   **Introduction**
@@ -63,124 +62,104 @@ $$
 -   **Simulation studies**
 -   **HF-ACTION application**
 
-
 # Introduction
 
 ## Hierarchical Composite Endpoints
 
-:::{.fragment}
+
 -   **Composite outcomes**
     -   **Components**: Death, hospitalization, other events
     -   **Standard approach**: Time to first event (e.g., Cox model)
-:::
-:::{.fragment}    
+
 -   **Win ratio (WR)** [@pocock2012]
     -   **Pairwise comparisons**: Treatment vs control [@buyse:2010]
     -   **Each pair**: Death \> hospitalization (\> other events)
-    -   **Effect size**
-$$
-    \text{WR} = \frac{\text{Number of wins}}{\text{Number of losses}}
-$$
-:::
+    -   **Effect size** $$
+        \text{WR} = \frac{\text{Number of wins}}{\text{Number of losses}}
+        $$
 
 
 ## Data and Notation
 
-:::{.fragment}
+
 -   **Outcomes data** (subject $i$)
     -   $D_i$: time to death
     -   $T_i$: time to first nonfatal event
     -   $\bs Y_i(t) =(D_i\wedge t, T_i\wedge t)$: cumulative data at $t$
         -   $x\wedge y = \min(x, y)$
-:::
 
-:::{.fragment}
--   **Win indicator**
-\begin{align*}\label{eq:win2tier}
+-   **Win indicator** \begin{align*}\label{eq:win2tier}
     \W(\bs Y_i, \bs Y_j)(t) = \underbrace{I(D_j< D_i\wedge t)}_{\mbox{Win on survival}}
     + \underbrace{I(D_i\wedge D_j >t,\; T_j< T_i\wedge t)}_
     {\mbox{Tie on survival, win on nonfatal event}}
-\end{align*}
-:::
+    \end{align*}
 
 
 ## Win Ratio Regression
-:::{.fragment}
--   **Semiparametric regression**
-\begin{equation}\label{eq:pw}
+
+
+-   **Semiparametric regression** \begin{equation}\label{eq:pw}
     \frac{\pr\{\W(\bs Y_i, \bs Y_j)(t) = 1\mid z_i, z_j\}}{\pr\{\W(\bs Y_j, \bs Y_i)(t) = 1\mid z_j, z_i\}} = \exp\left\{\beta^\T(z_i - z_j)\right\}
-\end{equation}
+    \end{equation}
     -   $z$: $p$-dimensional covariates
     -   **Proportional win-fractions (PW) model**
         -   Equivalent to Cox PH model in univariate case [@oakes:2016]---WR = 1/HR
     -   $\exp(\beta)$: win ratios associated with unit increases in $z$
-:::
-:::{.fragment}
--   **Limitation**: $p<< n$
-        <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. -->
-:::
+
+-   **Limitation**: $p<< n$ <!-- -   **Potential features**: Patient demographics, medical history, functional measurements (e.g., six-minute walk test, peak VO2), echocardiographic parameters (e.g., left ventricular ejection fraction), biomarker levels (e.g., NT-proBNP, troponins), etc. -->
+
 
 ## Goals
 
-:::{.fragment}
+
 -   **Objectives**:
-    -   Automate variable selection in WR regression  
+    -   Automate variable selection in WR regression\
     -   Enhance prediction accuracy and model parsimony
-:::
 
-:::{.fragment}
 -   **Approach**:
-    -   Apply **elastic net** regularization to PW model  
-        -   Mixture of $L_1$ (lasso) and $L_2$ (ridge) penalties  
+    -   Apply **elastic net** regularization to PW model
+        -   Mixture of $L_1$ (lasso) and $L_2$ (ridge) penalties\
     -   Implemented in [`wrnet`](https://lmaowisc.github.io/wrnet/) R package
-:::
-
 
 
 # Methods
 
 ## Standard Model-Fitting
 
-:::{.fragment}
+
 -   **Observed data**
     -   $\bs Y_i(X_i)$: outcomes data up to $X_i = D_i \wedge C_i$ ($C_i$: censoring time)
-:::
 
-:::{.fragment}
--   **Estimating equation** [@mao2021]
-\begin{equation}
-U_n(\beta) = |\mathcal R|^{-1} \sum_{(i, j)\in \mathcal R}
-z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})} \right\}
-\end{equation}
-    -   $z_{ij} = z_i - z_j$: covariate difference  
+-   **Estimating equation** [@mao2021] \begin{equation}
+    U_n(\beta) = |\mathcal R|^{-1} \sum_{(i, j)\in \mathcal R}
+    z_{ij} \left\{ \delta_{ij} - \frac{\exp(\beta^\top z_{ij})}{1 + \exp(\beta^\top z_{ij})} \right\}
+    \end{equation}
+    -   $z_{ij} = z_i - z_j$: covariate difference\
     -   $\delta_{ij} = \mathcal{W}(\bs Y_i, \bs Y_j)(X_i \wedge X_j)$: observed win indicator
     -   $\mathcal{R}=\{(i, j): \delta_{ij} + \delta_{ji} > 0\}$: set of *comparable* pairs
-:::
 
 
 ## Estimation
-:::{.fragment}
--   **Estimator**: solving
-$$
-U_n(\hat\beta) \;\;= 0
-$$
+
+
+-   **Estimator**: solving $$
+    U_n(\hat\beta) \;\;= 0
+    $$
     -   Standard Newton--Raphson algorithm
-:::
-:::{.fragment}
+
 -   **Connection with logistic regression**
     -   $U_n(\hat\beta)$ equivalent to logistic score function (no intercept)
     -   Each comparable $(i, j)$ pair as an *observation*
         -   $\delta_{ij}$: binary response
         -   $z_{ij}$: covariates
-:::
+
 
 ## Regularized PW model
 
--   **Objective function** [@zou:2005]:
-\begin{align}\label{eq:obj_fun}
-l_n(\beta;\lambda) &= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_{ij}\beta^\T z_{ij} - \log\{1+\exp(\beta^\T z_{ij})\}\right]\notag\\
-&\hspace{3em}+\lambda\left\{(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1\right\}
-\end{align}
+-   **Objective function** [@zou:2005]: \begin{align}\label{eq:obj_fun}
+    l_n(\beta;\lambda) &= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_{ij}\beta^\T z_{ij} - \log\{1+\exp(\beta^\T z_{ij})\}\right]\notag\\
+    &\hspace{3em}+\lambda\left\{(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1\right\}
+    \end{align}
     -   **Pathwise solution** $\hat\beta(\lambda) = \arg\min_\beta l_n(\beta;\lambda)$
         -   Numerically equivalent to regularized logistic regression
     -   Tuning parameter $\lambda\geq 0$---determined by cross-validation (CV)
@@ -191,14 +170,17 @@ l_n(\beta;\lambda) &= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_
 ## Pathwise Solution
 
 -   **Pathwise algorithm** [@friedman:2010]
+
     -   Efficient computation of $\hat\beta(\lambda)$ for all $\lambda$
+
     ```{r}
     glmnet::glmnet(x, y, family = "binomial", intercept = FALSE, lambda)
     ```
+
     -   `x`: covariate matrix containing $z_{ij}$ ,
-    -   `y`: response vector $\delta_{ij}$ 
+    -   `y`: response vector $\delta_{ij}$
     -   `intercept = FALSE` removes intercept
-    -   `lambda`:  user-specified $\lambda$ vector
+    -   `lambda`: user-specified $\lambda$ vector
 
 ## Cross Validation
 
@@ -208,8 +190,6 @@ l_n(\beta;\lambda) &= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_
     -   Not appropriate
         -   Overlap between analysis and validation sets
         -   Inflation of sample size
-
-
 -   **Subject-based CV**
     -   Partition subjects into $k$ folds $\mathcal{S}^{(k)}$
     -   Train on $\mathcal{S}^{(-k)}$: $\wh\beta^{(-k)}(\lambda)$ $\longrightarrow$ validate on $\mathcal{S}^{(k)}$
@@ -217,66 +197,59 @@ l_n(\beta;\lambda) &= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\delta_
 
 ## Win/Risk Score
 
--   **Motivation** 
-    -   Model-predicted win probability given comparability
-$$\mu(z_i, z_j;\beta)=\frac{\exp\{\beta^\T(z_i-z_j)\}}{1 + \exp\{\beta^\T(z_i-z_j)\}}$$
-    -   $\beta^\T z$ measures tendency to win
-\begin{align*}
-\mu(z_i, z_j;\beta) > 0.5 &\Leftrightarrow \beta^\T z_i > \beta^\T z_j;\\
-\mu(z_i, z_j;\beta) = 0.5 &\Leftrightarrow \beta^\T z_i = \beta^\T z_j;\\
-\mu(z_i, z_j;\beta) < 0.5 &\Leftrightarrow \beta^\T z_i < \beta^\T z_j.
-\end{align*}
+-   **Motivation**
+    -   Model-predicted win probability given comparability $$\mu(z_i, z_j;\beta)=\frac{\exp\{\beta^\T(z_i-z_j)\}}{1 + \exp\{\beta^\T(z_i-z_j)\}}$$
+    -   $\beta^\T z$ measures tendency to win \begin{align*}
+        \mu(z_i, z_j;\beta) > 0.5 &\Leftrightarrow \beta^\T z_i > \beta^\T z_j;\\
+        \mu(z_i, z_j;\beta) = 0.5 &\Leftrightarrow \beta^\T z_i = \beta^\T z_j;\\
+        \mu(z_i, z_j;\beta) < 0.5 &\Leftrightarrow \beta^\T z_i < \beta^\T z_j.
+        \end{align*}
     -   $-\beta^\T z$: risk score
 
 ## Generalized Concordance Index
 
-
 -   **Validatio/test set** $\mathcal S^*$
-    -   Pairwise indices
-$$
-\mathcal R^* = \{(i,j): \delta_{ij}+\delta_{ji}\neq 0; i<j; i,j\in\S^*\}
-$$
+    -   Pairwise indices $$
+        \mathcal R^* = \{(i,j): \delta_{ij}+\delta_{ji}\neq 0; i<j; i,j\in\S^*\}
+        $$
+-   **Concordance** [@harrell:1982; @uno:2011; @cheung:2019]
+    -   Proportion of correct ranking of pairs \begin{equation}\label{eq:c_index}
+        \mathcal C(\S^*;\beta) = |\mathcal R^*|^{-1}\sum_{(i, j)\in\mathcal R^*}
+        \bigl[\underbrace{I\{(2\delta_{ij} -1)(\beta^\T z_i - \beta^\T z_j)>0\}}_{\text{Concordant pair}}+2^{-1} 
+        \underbrace{I(\beta^\T z_i = \beta^\T z_j)}_{\text{Tied score}}\bigr]
+        \end{equation}
 
--   **Concordance** [@harrell:1982]
-    -   Proportion of correct ranking of pairs 
-\begin{equation}\label{eq:c_index}
-    \mathcal C(\S^*;\beta) = |\mathcal R^*|^{-1}\sum_{(i, j)\in\mathcal R^*}
-\bigl[\underbrace{I\{(2\delta_{ij} -1)(\beta^\T z_i - \beta^\T z_j)>0\}}_{\text{Concordant pair}}+2^{-1} 
-\underbrace{I(\beta^\T z_i = \beta^\T z_j)}_{\text{Tied score}}\bigr]
-\end{equation}    
-    
 ## Validation and Testing
 
 -   **Model tuning**
-    -   **$k$th-fold CV concordance**: $C^{(k)}(\lambda) = \mathcal C\left(\Sk;\wh\beta^{(-k)}(\lambda)\right)$
-    -  **Optimal** $\lambda_{\rm opt} = \arg\max_\lambda K^{-1}\sum_{k=1}^K\C^{(k)}(\lambda)$
+    -   $k$th-fold CV concordance: $C^{(k)}(\lambda) = \mathcal C\left(\Sk;\wh\beta^{(-k)}(\lambda)\right)$
+    -   **Optimal** $\lambda_{\rm opt} = \arg\max_\lambda K^{-1}\sum_{k=1}^K\C^{(k)}(\lambda)$
     -   **Final model**: $\wh\beta(\lambda_{\rm opt})$
-
 -   **Variable importance**
     -   Component-wise $|\beta|/\text{sd}(z)$
-
-
 -   **Test C-index**
-    -   $\mathcal C(\S^*;\wh\beta(\lambda_{\rm opt}))$ for test set $\S^*$ 
+    -   $\mathcal C(\S^*;\wh\beta(\lambda_{\rm opt}))$ for test set $\S^*$
 
 ## Workflow - Input Data
 
 -   **Data format**
-    -   Long format with columns: `id`, `time`, `status`, and covariates
-```{r}
-# Load package containing data
-library(WR)
-df <- gbc # n = 686 subjects, p = 9 covariates
-df # status = 0 (censored), 1 (death), 2 (recurrence)
-#>   id      time status hormone age menopause size grade ...
-#>1   1 43.836066      2       1  38         1   18     3  
-#>2   1 74.819672      0       1  38         1   18     3  
-#>3   2 46.557377      2       1  52         1   20     1   
-#>4   2 65.770492      0       1  52         1   20     1  
-#>5   3 41.934426      2       1  47         1   30     2   
-#>...
 
-```
+    -   Long format with columns: `id`, `time`, `status`, and covariates
+
+    ```{r}
+    # Load package containing data
+    library(WR)
+    df <- gbc # n = 686 subjects, p = 9 covariates
+    df # status = 0 (censored), 1 (death), 2 (recurrence)
+    #>   id      time status hormone age menopause size grade ...
+    #>1   1 43.836066      2       1  38         1   18     3  
+    #>2   1 74.819672      0       1  38         1   18     3  
+    #>3   2 46.557377      2       1  52         1   20     1   
+    #>4   2 65.770492      0       1  52         1   20     1  
+    #>5   3 41.934426      2       1  47         1   30     2   
+    #>...
+
+    ```
 
 ## Workflow - Data Partitioning
 
@@ -294,7 +267,7 @@ df_test <- obj_split$df_test
 
 ## Workflow - Cross-Validation (I)
 
--   **$k$-fold CV**
+-   $k$-fold CV
     -   `cv_wrnet(id, time, status, Z, k = 10, ...)`
 
 ```{r}
@@ -321,26 +294,29 @@ lambda_opt
 ## Workflow - Final Model
 
 -   **Fit final model**
+
     -   `wrnet(id, time, status, Z, lambda = lambda_opt, ...)`
-```{r}
-# Final model ------------------------------------------
-final_fit <- wrnet(df_train$id, df_train$time, df_train$status, 
-          df_train |> select(-c(id, time, status)), lambda = lambda_opt)
-final_fit$beta # Estimated coefficients
-#>                      s0
-#> hormone     0.306026364
-#> age         0.003111462
-#> menopause   .          
-#> size       -0.007720497
-#> grade      -0.285511701
-#> nodes      -0.082227827
-#> prog_recp   0.001861367
-#> estrg_recp  .     
-```
+
+    ```{r}
+    # Final model ------------------------------------------
+    final_fit <- wrnet(df_train$id, df_train$time, df_train$status, 
+              df_train |> select(-c(id, time, status)), lambda = lambda_opt)
+    final_fit$beta # Estimated coefficients
+    #>                      s0
+    #> hormone     0.306026364
+    #> age         0.003111462
+    #> menopause   .          
+    #> size       -0.007720497
+    #> grade      -0.285511701
+    #> nodes      -0.082227827
+    #> prog_recp   0.001861367
+    #> estrg_recp  .     
+    ```
 
 ## Workflow - Variable Importance
 
 -   **Variable importance**
+
 ```{r}
 final_fit |> vi_wrnet() |> vip()
 ```
@@ -365,97 +341,119 @@ test_result$concordance
 #> 3 overall         0.664
 ```
 
-
 # Simulations
 
-<!-- ## Setup -->
+## Setup
 
-<!-- -   **Covariates**: $z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T$ -->
-<!--     -   $z_{\cdot k} \sim N(0,1)$---AR(1) with $\rho = 0.1$ -->
-<!-- -   **Outcome model**: $$ -->
-<!--       \pr(D > s, T > t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)  -->
-<!--     $$ -->
-<!--     -   $\lambda_D = 0.1$, $\lambda_H = 1$, $\kappa = 1.25$ -->
-<!-- -   **Censoring**: $\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)$ -->
-<!--     -   $\lambda_C = 0.02$ -->
+-   **Covariates**: $z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T$
+    -   $z_{\cdot k} \sim N(0,1)$---AR(1) with $\rho = 0.1$
+-   **Outcome model**: $$
+      \pr(D > s, T > t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)
+    $$
+    -   $\lambda_D = 0.1$, $\lambda_H = 1$, $\kappa = 1.25$
+-   **Censoring**: $\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)$
+    -   $\lambda_C = 0.02$
 
-<!-- ## Two Effect Patterns -->
+## Two Effect Patterns
 
-<!-- -   **Scenarios** -->
-<!--     1.  Same effect pattern on components $$ -->
-<!--         \beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10}, -->
-<!--         \underbrace{0,\ldots, 0}_{p - 10}). -->
-<!--         $$ -->
-<!--     2.  Different effect patterns on components \begin{align*} -->
-<!--            \beta_D&=(\underbrace{0.75,\ldots, 0.75}_{5}, -->
-<!--         \underbrace{0,\ldots, 0}_{p - 5});\\ -->
-<!--            \beta_H&=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10}) -->
-<!--         \end{align*} -->
+-   **Scenarios**
+    1.  Same effect pattern on components $$
+        \beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10},
+        \underbrace{0,\ldots, 0}_{p - 10}).
+        $$
+    2.  Different effect patterns on components \begin{align*}
+           \beta_D&=(\underbrace{0.75,\ldots, 0.75}_{5},
+        \underbrace{0,\ldots, 0}_{p - 5});\\
+           \beta_H&=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10})
+        \end{align*}
+
+## Predictive Accuracy - C-index
+
+-   **Regularized WR vs regularized Cox on first event**
+    -   80% training + 20% testing 
+    
+![](figs/pres_simu.png){fig-align="center" width="55%"}
+
+## Variable Selection - Sensitivity
+
+-   **S2: $z_{\cdot 1}$--$z_{\cdot 5}$ $\longrightarrow$ mortality**
+
+![](figs/pres_sens.png){fig-align="center" width="80%"}
+
+## Variable Selection - Specifity
+
+-   **$z_{\cdot 11}$--$z_{\cdot 20}$ $\longrightarrow$ no effect**
+
+![](figs/pres_spec.png){fig-align="center" width="80%"}
+
+# HF-ACTION Application
+
+## Study Information
+
+-   **HF-ACTION** [@oconner:2009]
+    -   **Population**: 2,331 HFrEF patients across North America and France
+    -   **Objective**: Evaluate the effect of exercise training on composite of death and hospitalization
+
+-   **Subgroup of high-risk patients** 
+    -   $n=426$ high-risk patients (CPX duration $\leq 9$ min)
+    -   Outcomes: death \> hospitalization
+    -   $p=153$ baseline features
+    -   Train-test split: 80%/20%
+
+## Cross-Validation
+
+
+-   Naive pairwise logistic CV on pairs leads to overfitting
+
+![](figs/fig_cv_errors.png){fig-align="center" width="80%"}
+
+
+## Test Performance - Risk Scores
+
+-   **WRNet vs regularized Cox**
+    -   WRNet better stratifies high-risk patients, especially on mortality
+    
+![](figs/fig_preds.png){fig-align="center" width="70%"}
+
+## Test Performance - C-Index
+
+-   **WRNet vs regularized Cox**
+    -   WRNet outperforms Cox on overall and event-specific C-indices
+
+![](figs/pres_hf_cind.png){fig-align="center" width="30%"}
+
+
+## Variable Importance
+
+-   WRNet selects 20 interpretable variables
+    ![](figs/fig_vip.png){fig-align="center" width="70%"}
 
 
 
+## Final WR Model
 
-<!-- ## Performance: Sensitivity and Specificity -->
+![](figs/pres_hf_reg.png){fig-align="center" width="55%"}
 
-<!-- -   Compare variable selection accuracy between WR and Cox -->
-<!-- -   WR consistently better in identifying true features -->
-<!-- -   Especially better in **Scenario 2** when component effects differ -->
 
-<!-- ## Predictive accuracy (C-index) -->
+# Summary and Discussion
 
-<!-- ![](figs/fig_cind.png){fig-align="center" width="55%"} -->
+## Summary
 
-<!-- -   In Scenario 2, WR has better prognostic performance for death and overall -->
+-   **Methodology**
+    -   Developed elastic net-regularized WR regression
+    -   Better aligns with clinical priorities than Cox
+    -   Accurate feature selection and prediction
 
-<!-- # HF-ACTION application -->
+-   **Tools**
+    -   `wrnet`: [https://lmaowisc.github.io/wrnet/](https://lmaowisc.github.io/wrnet/)
+    -   Efficient implementation with `glmnet()` backend
+    -   Supports CV, test evaluation, and variable importance
 
-<!-- ## Dataset and setup -->
+## Future Topics
 
-<!-- -   Subset: $n=426$ high-risk patients (CPX duration $\leq 9$ min) -->
-<!-- -   Outcomes: death \> hospitalization -->
-<!-- -   $p=153$ baseline features -->
-<!-- -   Train-test split: 80%/20% -->
-
-<!-- ## Cross-validation comparison -->
-
-<!-- ![](figs/fig_cv_errors.png){fig-align="center" width="80%"} -->
-
-<!-- -   Naive CV on pairs leads to overfitting -->
-<!-- -   Subject-level CV identifies optimal $\lambda$ properly -->
-
-<!-- ## Test performance -->
-
-<!-- ![](fig_preds.eps){fig-align="center" width="90%"} -->
-
-<!-- -   WR model better stratifies high-risk patients -->
-<!-- -   Outperforms Cox in predicting deaths -->
-
-<!-- ## Variable importance -->
-
-<!-- ![](fig_vip.eps){fig-align="center" width="90%"} -->
-
-<!-- -   WR model selects 20 interpretable variables -->
-<!-- -   Top predictors include sex, valve surgery, CPX metrics -->
-
-<!-- # Summary and discussion -->
-
-<!-- ## Summary -->
-
-<!-- -   Developed elastic net-regularized WR regression -->
-<!-- -   Better aligns with clinical priorities than Cox -->
-<!-- -   Accurate feature selection and prediction -->
-
-<!-- ## Tools -->
-
-<!-- -   R package [`wrnet`](https://lmaowisc.github.io/wrnet/) -->
-<!-- -   Efficient implementation with `glmnet()` backend -->
-<!-- -   Supports CV, test evaluation, and variable importance -->
-
-<!-- ## Future directions -->
-
-<!-- -   Explore $\alpha \in (0,1)$ settings -->
-<!-- -   Extend to time-varying effects and nonlinearities -->
-<!-- -   Combine with restricted estimands for precision -->
+-   Explore $\alpha \in (0,1)$ settings
+-   Extend to time-varying effects and nonlinearities
+-   Decision trees
 
 ## References
 

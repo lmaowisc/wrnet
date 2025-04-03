@@ -685,141 +685,64 @@ l_n(\beta;\lambda) &amp;= - |\mathcal R|^{-1}\sum_{(i, j)\in\mathcal R}\left[\de
 <section>
 <section id="simulations" class="title-slide slide level1 center">
 <h1>Simulations</h1>
-
-</section>
-<section id="setup" class="slide level2">
-<h2>Setup</h2>
-<ul>
-<li>Covariates: <span class="math inline">\(z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T\)</span>
-<ul>
-<li><span class="math inline">\(z_{\cdot k} \sim N(0,1)\)</span>—AR(1) with <span class="math inline">\(\rho = 0.1\)</span></li>
-</ul></li>
-<li>Outcome model: <span class="math display">\[
-  \pr(D &gt; s, T &gt; t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)
-\]</span>
-<ul>
-<li><span class="math inline">\(\lambda_D = 0.1\)</span>, <span class="math inline">\(\lambda_H = 1\)</span>, <span class="math inline">\(\kappa = 1.25\)</span></li>
-</ul></li>
-<li>Censoring: <span class="math inline">\(\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)\)</span>
-<ul>
-<li><span class="math inline">\(\lambda_C = 0.02\)</span></li>
-</ul></li>
-</ul>
-</section>
-<section id="two-effect-patterns" class="slide level2">
-<h2>Two Effect Patterns</h2>
-<ul>
-<li><strong>Scenarios</strong>
-<ol type="1">
-<li>Same effect pattern on components <span class="math display">\[
-\beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10},
-\underbrace{0,\ldots, 0}_{p - 10}).
-\]</span></li>
-<li>Different effect patterns on components <span class="math display">\[\begin{align*}
-   \beta_D&amp;=(\underbrace{0.75,\ldots, 0.75}_{5},
-\underbrace{0,\ldots, 0}_{p - 5});\\
-   \beta_H&amp;=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10})
-\end{align*}\]</span></li>
-</ol></li>
-</ul>
-</section>
-<section id="performance-sensitivity-and-specificity" class="slide level2">
-<h2>Performance: Sensitivity and Specificity</h2>
-<ul>
-<li>Compare variable selection accuracy between WR and Cox</li>
-<li>WR consistently better in identifying true features</li>
-<li>Especially better in <strong>Scenario 2</strong> when component effects differ</li>
-</ul>
-</section>
-<section id="predictive-accuracy-c-index" class="slide level2">
-<h2>Predictive accuracy (C-index)</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="figs/fig_cind.png" class="quarto-figure quarto-figure-center" style="width:55.0%"></p>
-</figure>
-</div>
-<ul>
-<li>In Scenario 2, WR has better prognostic performance for death and overall</li>
-</ul>
-</section></section>
-<section>
-<section id="hf-action-application" class="title-slide slide level1 center">
-<h1>HF-ACTION application</h1>
-
-</section>
-<section id="dataset-and-setup" class="slide level2">
-<h2>Dataset and setup</h2>
-<ul>
-<li>Subset: <span class="math inline">\(n=426\)</span> high-risk patients (CPX duration <span class="math inline">\(\leq 9\)</span> min)</li>
-<li>Outcomes: death &gt; hospitalization</li>
-<li><span class="math inline">\(p=153\)</span> baseline features</li>
-<li>Train-test split: 80%/20%</li>
-</ul>
-</section>
-<section id="cross-validation-comparison" class="slide level2">
-<h2>Cross-validation comparison</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="figs/fig_cv_errors.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
-</figure>
-</div>
-<ul>
-<li>Naive CV on pairs leads to overfitting</li>
-<li>Subject-level CV identifies optimal <span class="math inline">\(\lambda\)</span> properly</li>
-</ul>
-</section>
-<section id="test-performance" class="slide level2">
-<h2>Test performance</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><embed data-src="fig_preds.eps" class="quarto-figure quarto-figure-center" style="width:90.0%"></p>
-</figure>
-</div>
-<ul>
-<li>WR model better stratifies high-risk patients</li>
-<li>Outperforms Cox in predicting deaths</li>
-</ul>
-</section>
-<section id="variable-importance" class="slide level2">
-<h2>Variable importance</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><embed data-src="fig_vip.eps" class="quarto-figure quarto-figure-center" style="width:90.0%"></p>
-</figure>
-</div>
-<ul>
-<li>WR model selects 20 interpretable variables</li>
-<li>Top predictors include sex, valve surgery, CPX metrics</li>
-</ul>
-</section></section>
-<section>
-<section id="summary-and-discussion" class="title-slide slide level1 center">
-<h1>Summary and discussion</h1>
-
-</section>
-<section id="summary" class="slide level2">
-<h2>Summary</h2>
-<ul>
-<li>Developed elastic net-regularized WR regression</li>
-<li>Better aligns with clinical priorities than Cox</li>
-<li>Accurate feature selection and prediction</li>
-</ul>
-</section>
-<section id="tools" class="slide level2">
-<h2>Tools</h2>
-<ul>
-<li>R package <a href="https://lmaowisc.github.io/wrnet/"><code>wrnet</code></a></li>
-<li>Efficient implementation with <code>glmnet()</code> backend</li>
-<li>Supports CV, test evaluation, and variable importance</li>
-</ul>
-</section>
-<section id="future-directions" class="slide level2">
-<h2>Future directions</h2>
-<ul>
-<li>Explore <span class="math inline">\(\alpha \in (0,1)\)</span> settings</li>
-<li>Extend to time-varying effects and nonlinearities</li>
-<li>Combine with restricted estimands for precision</li>
-</ul>
+<!-- ## Setup -->
+<!-- -   **Covariates**: $z = (z_{\cdot 1}, z_{\cdot 2}, \ldots, z_{\cdot p})^\T$ -->
+<!--     -   $z_{\cdot k} \sim N(0,1)$---AR(1) with $\rho = 0.1$ -->
+<!-- -   **Outcome model**: $$ -->
+<!--       \pr(D > s, T > t\mid z) = \exp\left(-\left[\{\exp(-\beta_D^\T z)\lambda_Ds\}^\kappa + \{\exp(-\beta_H^\T z)\lambda_Ht\}^\kappa\right]^{1/\kappa}\right)  -->
+<!--     $$ -->
+<!--     -   $\lambda_D = 0.1$, $\lambda_H = 1$, $\kappa = 1.25$ -->
+<!-- -   **Censoring**: $\mbox{Un}[0.2, 4]\wedge\mbox{Expn}(\lambda_C)$ -->
+<!--     -   $\lambda_C = 0.02$ -->
+<!-- ## Two Effect Patterns -->
+<!-- -   **Scenarios** -->
+<!--     1.  Same effect pattern on components $$ -->
+<!--         \beta_D=\beta_H=(\underbrace{0.5,\ldots, 0.5}_{10}, -->
+<!--         \underbrace{0,\ldots, 0}_{p - 10}). -->
+<!--         $$ -->
+<!--     2.  Different effect patterns on components \begin{align*} -->
+<!--            \beta_D&=(\underbrace{0.75,\ldots, 0.75}_{5}, -->
+<!--         \underbrace{0,\ldots, 0}_{p - 5});\\ -->
+<!--            \beta_H&=(\underbrace{0,\ldots, 0}_{5}, \underbrace{0.75,\ldots, 0.75}_{5}, \underbrace{0,\ldots, 0}_{p - 10}) -->
+<!--         \end{align*} -->
+<!-- ## Performance: Sensitivity and Specificity -->
+<!-- -   Compare variable selection accuracy between WR and Cox -->
+<!-- -   WR consistently better in identifying true features -->
+<!-- -   Especially better in **Scenario 2** when component effects differ -->
+<!-- ## Predictive accuracy (C-index) -->
+<!-- ![](figs/fig_cind.png){fig-align="center" width="55%"} -->
+<!-- -   In Scenario 2, WR has better prognostic performance for death and overall -->
+<!-- # HF-ACTION application -->
+<!-- ## Dataset and setup -->
+<!-- -   Subset: $n=426$ high-risk patients (CPX duration $\leq 9$ min) -->
+<!-- -   Outcomes: death \> hospitalization -->
+<!-- -   $p=153$ baseline features -->
+<!-- -   Train-test split: 80%/20% -->
+<!-- ## Cross-validation comparison -->
+<!-- ![](figs/fig_cv_errors.png){fig-align="center" width="80%"} -->
+<!-- -   Naive CV on pairs leads to overfitting -->
+<!-- -   Subject-level CV identifies optimal $\lambda$ properly -->
+<!-- ## Test performance -->
+<!-- ![](fig_preds.eps){fig-align="center" width="90%"} -->
+<!-- -   WR model better stratifies high-risk patients -->
+<!-- -   Outperforms Cox in predicting deaths -->
+<!-- ## Variable importance -->
+<!-- ![](fig_vip.eps){fig-align="center" width="90%"} -->
+<!-- -   WR model selects 20 interpretable variables -->
+<!-- -   Top predictors include sex, valve surgery, CPX metrics -->
+<!-- # Summary and discussion -->
+<!-- ## Summary -->
+<!-- -   Developed elastic net-regularized WR regression -->
+<!-- -   Better aligns with clinical priorities than Cox -->
+<!-- -   Accurate feature selection and prediction -->
+<!-- ## Tools -->
+<!-- -   R package [`wrnet`](https://lmaowisc.github.io/wrnet/) -->
+<!-- -   Efficient implementation with `glmnet()` backend -->
+<!-- -   Supports CV, test evaluation, and variable importance -->
+<!-- ## Future directions -->
+<!-- -   Explore $\alpha \in (0,1)$ settings -->
+<!-- -   Extend to time-varying effects and nonlinearities -->
+<!-- -   Combine with restricted estimands for precision -->
 </section>
 <section id="references" class="slide level2 smaller scrollable">
 <h2>References</h2>

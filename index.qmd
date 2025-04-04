@@ -78,7 +78,7 @@ df_test <- obj_split$df_test
 
 ### Tuning-parameter selection
 
-Perform 10-fold (default) cross-validationon the training set:
+Perform 10-fold (default) cross-validation on the training set:
 
 ```{r}
 # 10-fold CV -------------------------------------------

@@ -102,7 +102,7 @@
     "href": "presentation.html#generalized-concordance-index",
     "title": "WRNet: Regularized win ratio regression",
     "section": "Generalized Concordance Index",
-    "text": "Generalized Concordance Index\n\nValidatio/test set \\(\\mathcal S^*\\)\n\nPairwise indices \\[\n\\mathcal R^* = \\{(i,j): \\delta_{ij}+\\delta_{ji}\\neq 0; i&lt;j; i,j\\in\\S^*\\}\n\\]\n\nConcordance (Cheung et al., 2019; Harrell et al., 1982; Uno et al., 2011)\n\nProportion of correct ranking of pairs \\[\\begin{equation}\\label{eq:c_index}\n\\mathcal C(\\S^*;\\beta) = |\\mathcal R^*|^{-1}\\sum_{(i, j)\\in\\mathcal R^*}\n\\bigl[\\underbrace{I\\{(2\\delta_{ij} -1)(\\beta^\\T z_i - \\beta^\\T z_j)&gt;0\\}}_{\\text{Concordant pair}}+2^{-1}\n\\underbrace{I(\\beta^\\T z_i = \\beta^\\T z_j)}_{\\text{Tied score}}\\bigr]\n\\end{equation}\\]"
+    "text": "Generalized Concordance Index\n\nValidation/test set \\(\\mathcal S^*\\)\n\nPairwise indices \\[\n\\mathcal R^* = \\{(i,j): \\delta_{ij}+\\delta_{ji}\\neq 0; i&lt;j; i,j\\in\\S^*\\}\n\\]\n\nConcordance (Cheung et al., 2019; Harrell et al., 1982; Uno et al., 2011)\n\nProportion of correct ranking of pairs \\[\\begin{equation}\\label{eq:c_index}\n\\mathcal C(\\S^*;\\beta) = |\\mathcal R^*|^{-1}\\sum_{(i, j)\\in\\mathcal R^*}\n\\bigl[\\underbrace{I\\{(2\\delta_{ij} -1)(\\beta^\\T z_i - \\beta^\\T z_j)&gt;0\\}}_{\\text{Concordant pair}}+2^{-1}\n\\underbrace{I(\\beta^\\T z_i = \\beta^\\T z_j)}_{\\text{Tied score}}\\bigr]\n\\end{equation}\\]"
   },
   {
     "objectID": "presentation.html#setup",

@@ -208,7 +208,7 @@ $$
 
 ## Generalized Concordance Index
 
--   **Validatio/test set** $\mathcal S^*$
+-   **Validation/test set** $\mathcal S^*$
     -   Pairwise indices $$
         \mathcal R^* = \{(i,j): \delta_{ij}+\delta_{ji}\neq 0; i<j; i,j\in\S^*\}
         $$
